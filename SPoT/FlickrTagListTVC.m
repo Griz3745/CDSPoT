@@ -87,9 +87,6 @@
             // Creates a new tag/photo array, Or Replaces the photo array for the tag
             [self.flickrTaggedPhotos setObject:taggedPhotos forKey:tag];
         }
-        
-        // Alphabetically sort the tags
-        self.tagList = [[self.tagList sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] mutableCopy];
     }
 }
 
@@ -104,6 +101,9 @@
     for (NSDictionary *flickrPhoto in self.flickrPhotos) {
         [self addPhotoToFlickrTaggedPhotos:flickrPhoto];
     }
+    
+    // Alphabetically sort the tags
+    self.tagList = [[self.tagList sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] mutableCopy];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -116,6 +116,8 @@
                     
                     // Get the array of photos associated with the tag
                     NSArray *taggedPhotos = [self.flickrTaggedPhotos valueForKey:self.tagList[indexPath.row]];
+                    
+                    // Send the photos for the tag
                     [segue.destinationViewController performSelector:@selector(setFlickrListPhotos:) withObject:taggedPhotos];
                     
                     // Set the title to the tag being shown

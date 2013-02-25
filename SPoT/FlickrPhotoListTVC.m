@@ -16,6 +16,11 @@
     // Model for this MVC
     _flickrListPhotos = flickrListPhotos;
     
+    // Alphabetically sort the photos
+    NSSortDescriptor *titleDescriptor = [[NSSortDescriptor alloc] initWithKey:FLICKR_PHOTO_TITLE ascending:YES];
+    NSSortDescriptor *subTitleDescriptor = [[NSSortDescriptor alloc] initWithKey:FLICKR_PHOTO_DESCRIPTION ascending:YES];
+    _flickrListPhotos = [_flickrListPhotos sortedArrayUsingDescriptors:@[titleDescriptor, subTitleDescriptor]];
+    
     // Since the Model has changed, a whole scale reload of the table is necessary
     [self.tableView reloadData];
 }
