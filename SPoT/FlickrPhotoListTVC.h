@@ -10,10 +10,14 @@
 
 @interface FlickrPhotoListTVC : FlickrListTVC
 
-// Model for this MVC
+// Model for this MVC, can be set externally
 @property (strong, nonatomic) NSArray *flickrListPhotos; // of NSDictionary
 
 // Abstract methods - implemented by derived classes
-- (void)savePhotoURL:(NSURL *)url;
+- (void)savePhoto:(NSDictionary *)flickrPhoto;
+- (void)alphabetizePhotoList;
+
+// Property value MUST be set in the derived class
+@property (strong, nonatomic) NSString *segueIdentifierString;
 
 @end

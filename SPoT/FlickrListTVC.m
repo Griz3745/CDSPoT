@@ -5,6 +5,13 @@
 //  Created by Michael Grysikiewicz on 2/24/13.
 //  Copyright (c) 2013 Michael Grysikiewicz. All rights reserved.
 //
+//  This is an abstract base class for all of the Table View Contoller (TVC)
+//  classes in the SPoT App.  All of the abstract methods provide a template
+//  of the task which the derived method should perform.
+//
+//  The configureCell:cellReuseIdentifier:cellIndexPath: should not be
+//  overridden by the derived class.  It provides a generic way to configure each cell
+//
 
 #import "FlickrListTVC.h"
 
@@ -18,31 +25,27 @@
 {
     [super viewDidLoad];
 
-    // Uncomment the following line to preserve selection between presentations.
+    // Preserve selection between presentations.
     self.clearsSelectionOnViewWillAppear = NO; 
 }
 
-#pragma mark - Table view data source
+#pragma mark - Class specific methods
 
-- (NSString *) getCellSubTitleForRow:(NSUInteger)row
+- (NSString *)getCellSubTitleForRow:(NSUInteger)row
 {
     // Abstract method
     return @"Cell subtitle not set";
 }
 
-- (NSString *) getCellTitleForRow:(NSUInteger)row
+- (NSString *)getCellTitleForRow:(NSUInteger)row
 {
     // Abstract method
     return @"Cell title not set";
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    // Abstract method
-    return 0;
-}
-
-- (UITableViewCell *) configureCell:(UITableView *)tableView cellReuseIdentifier:(NSString *)cellReuseId cellIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *) configureCell:(UITableView *)tableView
+                cellReuseIdentifier:(NSString *)cellReuseId
+                      cellIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellReuseId];
     
@@ -53,8 +56,18 @@
     return cell;
 }
  
+#pragma mark - Table view data source
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    // Abstract method
+    return 0;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    // Abstract method, MUST be overriden becuase cellReuseID is static
+    
     // Pull a cell prototype from the pool
     static NSString *cellReuseID = @"Cell";
     

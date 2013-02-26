@@ -18,6 +18,6 @@
 
 // Abstract methods which the derived classes must implement
 - (NSString *)getCellTitleForRow:(NSUInteger)row;
-- (NSString *) getCellSubTitleForRow:(NSUInteger)row;
+- (NSString *)getCellSubTitleForRow:(NSUInteger)row;
 
 @end

@@ -10,6 +10,7 @@
 
 @interface ImageViewController : UIViewController
 
+// This is the Model for this MVC, can be set externally
 @property (nonatomic, strong) NSURL *imageURL;
 
 @end

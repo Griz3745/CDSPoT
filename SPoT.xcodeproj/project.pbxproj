@@ -27,6 +27,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4C67059416DC2DD3002E81DB /* SPoT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPoT.h; sourceTree = "<group>"; };
 		4C71500A16DAAA32002F5654 /* SPoT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SPoT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C71500D16DAAA32002F5654 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		4C71500F16DAAA32002F5654 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -102,6 +103,7 @@
 		4C71501316DAAA32002F5654 /* SPoT */ = {
 			isa = PBXGroup;
 			children = (
+				4C67059416DC2DD3002E81DB /* SPoT.h */,
 				4C71503B16DAB6E8002F5654 /* FlickrListTVC.h */,
 				4C71503C16DAB6E8002F5654 /* FlickrListTVC.m */,
 				4C71503E16DAC837002F5654 /* FlickrTagListTVC.h */,
@@ -345,6 +347,7 @@
 				4C71502F16DAAA32002F5654 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
