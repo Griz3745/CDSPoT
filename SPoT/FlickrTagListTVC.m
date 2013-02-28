@@ -21,32 +21,32 @@
 
 // This is an NSDictionary using Flickr Tags as the dictionary Key
 // The dictionary Value is an NSArray of photos contining that Tag 
-@property (strong, nonatomic) NSMutableDictionary *flickrTaggedPhotos;
+@property (strong, nonatomic) NSDictionary *flickrTaggedPhotos;
 
 // tagList is an array of tags that match the tags in the flickrTaggedPhotos NSDictionary
 // ** I hate having to have a seperate data structure for the tags, but the
 // tableViewController needs to access by a subscript, and I couldn't find a
 // way to access the NSDictionary by subscript.
 // I had come up with this idea, and was confirmed on StackOverflow
-@property (strong, nonatomic) NSMutableArray *tagList; // all unique tags
+@property (strong, nonatomic) NSArray *tagList; // all unique tags
 
 @end
 
 @implementation FlickrTagListTVC
 
-- (NSMutableDictionary *)flickrTaggedPhotos
+- (NSDictionary *)flickrTaggedPhotos
 {
     if (!_flickrTaggedPhotos) {
-        _flickrTaggedPhotos = [[NSMutableDictionary alloc] init];
+        _flickrTaggedPhotos = [[NSDictionary alloc] init];
     }
     
     return _flickrTaggedPhotos;
 }
 
-- (NSMutableArray *)tagList
+- (NSArray *)tagList
 {
     if (!_tagList) {
-        _tagList = [[NSMutableArray alloc] init];
+        _tagList = [[NSArray alloc] init];
     }
     
     return _tagList;
@@ -71,9 +71,11 @@
         [self addPhotoToFlickrTaggedPhotos:flickrPhoto];
     }
     
+    self.tagList = [self.flickrTaggedPhotos allKeys]; // Recommended by Joan-Carles
+    
     // Alphabetically sort the tags
     self.tagList =
-        [[self.tagList sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] mutableCopy];
+        [self.tagList sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
 }
 
 #pragma mark - Class specific methods
@@ -82,10 +84,12 @@
 // and will update self.flickrTaggedPhotos with the tag<-->photo association  
 - (void)addPhotoToFlickrTaggedPhotos:(NSDictionary *)flickrPhoto
 {
-    // Keeps track of valid tags for this photo
-    NSMutableArray *tagsToProcess = [[NSMutableArray alloc] init];
-    
     if (flickrPhoto) {
+        // Copy to be modified within this method
+        NSMutableDictionary *mutableFlickrTaggedPhotos = [self.flickrTaggedPhotos mutableCopy];
+        // Keeps track of valid tags for this photo
+        NSMutableArray *tagsToProcess = [[NSMutableArray alloc] init];
+        
         // Get the tags from the photo
         NSString *photoTags = [flickrPhoto valueForKey:FLICKR_TAGS];
         NSArray *tagStrings = [photoTags componentsSeparatedByString:@" "];
@@ -105,16 +109,13 @@
         
         // Add this photo to the array of photos for this tag
         for (NSString *tag in tagsToProcess) {
-            NSMutableArray *taggedPhotos = [[self.flickrTaggedPhotos valueForKey:tag] mutableCopy];
+            NSMutableArray *taggedPhotos = [[mutableFlickrTaggedPhotos valueForKey:tag] mutableCopy];
             
             // if taggedPhotos is nil then
             // this tag is not in the self.flickrTaggedPhotos dicitonary yet
             if (!taggedPhotos) {
                 // This is a new tag, create a photo array for it
                 taggedPhotos = [[NSMutableArray alloc] init];
-                
-                // Add a tag to the list
-                [self.tagList addObject:tag];
             }
             
             // Add this photo to photo array for this tag
@@ -122,8 +123,9 @@
             
             // Creates a new tag/photo array entry in the self.flickrTaggedPhotos dictionary,
             // Or Replaces the photo array for the tag
-            [self.flickrTaggedPhotos setObject:taggedPhotos forKey:tag];
+            [mutableFlickrTaggedPhotos setObject:taggedPhotos forKey:tag];
         }
+        self.flickrTaggedPhotos = mutableFlickrTaggedPhotos;
     }
 }
 
