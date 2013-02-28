@@ -45,7 +45,7 @@
         // FLICKR_PHOTO_ID is unique for each photo
         if ([[element objectForKey:FLICKR_PHOTO_ID] isEqual:[flickrPhoto objectForKey:FLICKR_PHOTO_ID]]) // These are NSStrings
         {
-            // The _flickrPhoto is already in the NSUserDefaluts recentsPhotos array
+            // The flickrPhoto is already in the NSUserDefaluts recentsPhotos array
             // and does not need to be added
             photoFound = YES;
             break; // Exit the forLoop (NSDictionary *element in recentPhotos)

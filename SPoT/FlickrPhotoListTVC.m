@@ -55,14 +55,14 @@
 }
 
 // Implementation of method from abstract base class
-- (NSString *) getCellTitleForRow:(NSUInteger)row
+- (NSString *) cellTitleForRow:(NSUInteger)row
 {
     // For the selected row, get the photo's title string
     return [[self.flickrListPhotos objectAtIndex:row] valueForKey:FLICKR_PHOTO_TITLE];
 }
 
 // Implementation of method from abstract base class
-- (NSString *) getCellSubTitleForRow:(NSUInteger)row
+- (NSString *) cellSubTitleForRow:(NSUInteger)row
 {
     // For the selected row, get the photo's subtitle string
     return [[self.flickrListPhotos objectAtIndex:row] valueForKeyPath:FLICKR_PHOTO_DESCRIPTION];
@@ -86,7 +86,7 @@
                     [segue.destinationViewController performSelector:@selector(setImageURL:) withObject:url];
                     
                     // Set the title of the destination view controller
-                    [segue.destinationViewController setTitle:[self getCellTitleForRow:indexPath.row]];
+                    [segue.destinationViewController setTitle:[self cellTitleForRow:indexPath.row]];
                 }
             }
         }

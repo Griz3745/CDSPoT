@@ -128,7 +128,7 @@
 }
 
 // Implementation of method from abstract base class
-- (NSString *) getCellTitleForRow:(NSUInteger)row
+- (NSString *) cellTitleForRow:(NSUInteger)row
 {
     // The Title for this TVC is the Tag
     
@@ -137,7 +137,7 @@
 }
 
 // Implementation of method from abstract base class
-- (NSString *) getCellSubTitleForRow:(NSUInteger)row
+- (NSString *) cellSubTitleForRow:(NSUInteger)row
 {
     // The Subtitle for this TVC is number of photos for the Tag
     
@@ -163,7 +163,7 @@
                     [segue.destinationViewController performSelector:@selector(setFlickrListPhotos:) withObject:taggedPhotos];
                     
                     // Set the title to the tag being shown
-                    [segue.destinationViewController setTitle:[self getCellTitleForRow:indexPath.row]];
+                    [segue.destinationViewController setTitle:[self cellTitleForRow:indexPath.row]];
                 }
             }
         }

@@ -31,13 +31,13 @@
 
 #pragma mark - Class specific methods
 
-- (NSString *)getCellSubTitleForRow:(NSUInteger)row
+- (NSString *)cellSubTitleForRow:(NSUInteger)row
 {
     // Abstract method
     return @"Cell subtitle not set";
 }
 
-- (NSString *)getCellTitleForRow:(NSUInteger)row
+- (NSString *)cellTitleForRow:(NSUInteger)row
 {
     // Abstract method
     return @"Cell title not set";
@@ -50,8 +50,8 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellReuseId];
     
     // Configure the cell
-    cell.textLabel.text = [self getCellTitleForRow:indexPath.row];
-    cell.detailTextLabel.text = [self getCellSubTitleForRow:indexPath.row];
+    cell.textLabel.text = [self cellTitleForRow:indexPath.row];
+    cell.detailTextLabel.text = [self cellSubTitleForRow:indexPath.row];
     
     return cell;
 }

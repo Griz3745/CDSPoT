@@ -57,7 +57,7 @@
     // Add the image view to the scroll view
     [self.scrollView addSubview:self.imageView];
     
-    // Initial ize zoom limits
+    // Initialize zoom limits
     self.scrollView.minimumZoomScale = 0.2;
     self.scrollView.maximumZoomScale = 5.0;
     
@@ -70,7 +70,7 @@
 
 #pragma mark - Class specific methods
 
-// Build a CGRect used to display as much of the image as possible, whitout any bordering white space
+// Build a CGRect used to display as much of the image as possible, without any bordering white space
 - (CGRect)setFullScreenImageZoom
 {
     // Frankly, I struggled with the code in this method. It works and I understand it when
@@ -92,7 +92,7 @@
                              self.scrollView.bounds.size.height) /
                              self.scrollView.bounds.size.width;
     }
-    else  { // The image is narrower than the scrollView, keep the image height
+    else  { // The scrollView is narrower than the image, keep the image height
         
         // Use the image height and calculate the width
         smallerRectHeight = self.imageView.image.size.height;
