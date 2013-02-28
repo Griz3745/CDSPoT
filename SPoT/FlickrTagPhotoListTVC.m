@@ -39,18 +39,7 @@
     if (!recentPhotos) recentPhotos = [[NSMutableArray alloc] init];
     
     // If this photo is not already in recentPhotos, then add it and synchronize NSUserDefaults
-    BOOL photoFound = NO;
-    for (NSDictionary *element in recentPhotos)
-    {
-        // FLICKR_PHOTO_ID is unique for each photo
-        if ([[element objectForKey:FLICKR_PHOTO_ID] isEqual:[flickrPhoto objectForKey:FLICKR_PHOTO_ID]]) // These are NSStrings
-        {
-            // The flickrPhoto is already in the NSUserDefaluts recentsPhotos array
-            // and does not need to be added
-            photoFound = YES;
-            break; // Exit the forLoop (NSDictionary *element in recentPhotos)
-        }
-    }
+    BOOL photoFound = !([recentPhotos indexOfObject:flickrPhoto] == NSNotFound);
     
     if (!photoFound)
     {
