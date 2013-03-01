@@ -10,6 +10,7 @@
 //  This is code was developed in Lecture 9, Winter 2013
 
 #import "ImageViewController.h"
+#import "UIApplication+NetworkActivity.h"
 
 @interface ImageViewController () <UIScrollViewDelegate>
 
@@ -18,6 +19,8 @@
 
 // Assignment IV, Requirement 6 says to turn off auto zooming if the user performs a zoom(pinch)
 @property (nonatomic, getter = allowAutoZoom) BOOL autoZoom; // borrowed 'autoZoom' from Joan-Carlos
+
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activitySpinner;
 
 @end
 
@@ -46,9 +49,9 @@
 {
     [super viewDidLayoutSubviews];
     
-    if (self.allowAutoZoom) {
-        // Set the full screen zoom for the image view within the scroll view
-        [self.scrollView zoomToRect:[self setFullScreenImageZoom] animated:NO];
+    if ((self.allowAutoZoom) && (self.imageView.image)) { // image could be null because of threading
+            // Set the full screen zoom for the image view within the scroll view
+            [self.scrollView zoomToRect:[self setFullScreenImageZoom] animated:NO];
     }
 }
 
@@ -121,26 +124,61 @@
         self.imageView.image = nil;
         self.autoZoom = YES;
         
-        // Get the 'bag of bits' specified by imageURL
-        // This line actually fetches the photo from Flickr
-        NSData *imageData = [[NSData alloc] initWithContentsOfURL:self.imageURL];
-        
-        // Convert the NSData into a UIImage
-        UIImage *image = [[UIImage alloc] initWithData:imageData];
-        
-        if (image) {
-            // Very important to reset the zoom scale BEFORE resetting the contentSize
-            self.scrollView.zoomScale = 1.0;
+        // Start the activity indicatior signaling an image load
+        [self.activitySpinner startAnimating];
+
+        // Fetch the photo from Flickr
+        dispatch_queue_t downloadQueue = dispatch_queue_create("flickr photo downloader", NULL);
+        dispatch_async(downloadQueue, ^{
+            // Increment Network Activity Indicator counter
+            [[UIApplication sharedApplication] showNetworkActivityIndicator];
             
-            // Tells scrollView how big an area to scroll over
-            self.scrollView.contentSize = image.size;
+            /* ----> */        [NSThread sleepForTimeInterval:2.0];
             
-            // Set the image in the imageView
-            self.imageView.image = image;
+            // Save the self.imageURL for later verification
+            NSURL *savedImageURL = self.imageURL;
             
-            // Must reset the frame of the imageView explicitly, set to "natural size"
-            self.imageView.frame = CGRectMake(0, 0, image.size.width, image.size.height);
-        }
+            // Get the 'bag of bits' specified by imageURL
+            // This line actually fetches the photo from Flickr
+            NSData *imageData = [[NSData alloc] initWithContentsOfURL:self.imageURL];
+            
+            // Decrement Network Activity Indicator counter
+            [[UIApplication sharedApplication] hideNetworkActivityIndicator];
+            
+            // Set the photo in the UI
+            dispatch_async(dispatch_get_main_queue(), ^{
+                // Verify that the user has not already selected a new URL
+                if (![savedImageURL isEqual:self.imageURL]) {
+                    // It never gets here on the iPhone because it always instantiates a new
+                    // controller, it will probably get here on the iPad though
+#warning - check this on iPad
+                    NSLog(@"Mismatched URL, discarding old one");
+                } else {
+                    // Convert the NSData into a UIImage
+                    UIImage *image = [[UIImage alloc] initWithData:imageData];
+                    
+                    if (image) {
+                        // Very important to reset the zoom scale BEFORE resetting the contentSize
+                        self.scrollView.zoomScale = 1.0;
+                        
+                        // Tells scrollView how big an area to scroll over
+                        self.scrollView.contentSize = image.size;
+                        
+                        // Set the image in the imageView
+                        self.imageView.image = image;
+                        
+                        // Must reset the frame of the imageView explicitly, set to "natural size"
+                        self.imageView.frame = CGRectMake(0, 0, image.size.width, image.size.height);
+                        
+                        // Set the zoom scale when the image is first loaded
+                        [self.scrollView zoomToRect:[self setFullScreenImageZoom] animated:NO];
+                    }
+                }
+                
+                // Remove the activity indicatior once the image is loaded
+                [self.activitySpinner stopAnimating];
+            });
+        });
     }
 }
 

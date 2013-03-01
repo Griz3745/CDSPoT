@@ -76,7 +76,7 @@
             if ([segue.identifier isEqualToString:self.segueIdentifierString]) { // set in the storyboard
                 if ([segue.destinationViewController respondsToSelector:@selector(setImageURL:)]) {
                     
-                    // This line actually fetches the photo from Flickr
+                    // Build the Flickr URL for this photo
                     NSURL *url = [FlickrFetcher urlForPhoto:self.flickrListPhotos[indexPath.row] format:FlickrPhotoFormatLarge];
                     
                     // Save the photo description, not the image

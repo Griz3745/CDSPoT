@@ -13,6 +13,7 @@
 
 #import "FlickrTagListTVC.h"
 #import "FlickrFetcher.h"
+#import "UIApplication+NetworkActivity.h"
 
 @interface FlickrTagListTVC ()
 
@@ -62,23 +63,64 @@
 {
     [super viewDidLoad];
     
-    // Load the Model for the MVC of this Table View Controller
-    // Fetch some photos from Flickr
-    self.flickrPhotos = [FlickrFetcher stanfordPhotos];
+    // Initilaize the TVC with photos
+    [self loadStanfordFlickrPhotos];
     
-    // Build the list of photo tags
-    for (NSDictionary *flickrPhoto in self.flickrPhotos) {
-        [self addPhotoToFlickrTaggedPhotos:flickrPhoto];
-    }
-    
-    self.tagList = [self.flickrTaggedPhotos allKeys]; // Recommended by Joan-Carles
-    
-    // Alphabetically sort the tags
-    self.tagList =
-        [self.tagList sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    // <Ctrl-drag> is broken for refreshControl, so add Target/Action manually
+    [self.refreshControl addTarget:self
+                            action:@selector(loadStanfordFlickrPhotos)
+                  forControlEvents:UIControlEventValueChanged];
 }
 
 #pragma mark - Class specific methods
+
+- (void)loadStanfordFlickrPhotos
+{
+    // Start the display of the activity indicator for the TVC
+    [self.refreshControl beginRefreshing];
+    
+    // Fetch the photo from Flickr
+    dispatch_queue_t downloadQueue = dispatch_queue_create("flickr photo list downloader", NULL);
+    dispatch_async(downloadQueue, ^{
+        // Increment Network Activity Indicator counter
+        [[UIApplication sharedApplication] showNetworkActivityIndicator];
+        
+/* ----> */        [NSThread sleepForTimeInterval:2.0];
+        
+        // Load the Model for the MVC of this Table View Controller
+        // by fetching some photos from Flickr
+        NSArray *latestPhotos = [FlickrFetcher stanfordPhotos];
+
+        // Decrement Network Activity Indicator counter
+        [[UIApplication sharedApplication] hideNetworkActivityIndicator];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // Reset data structures which manage tags
+            self.flickrTaggedPhotos = nil;
+            self.tagList = nil;
+            
+            // Keep self.flickrPhotos in the main thread
+            self.flickrPhotos = latestPhotos;
+            
+            // Build the list of photo tags
+            for (NSDictionary *flickrPhoto in self.flickrPhotos) {
+                [self addPhotoToFlickrTaggedPhotos:flickrPhoto];
+            }
+            
+            self.tagList = [self.flickrTaggedPhotos allKeys]; // Recommended by Joan-Carles
+            
+            // Alphabetically sort the tags
+            self.tagList =
+                [self.tagList sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+            
+            // Show the results of the fetch in the TVC after the thread has completed
+            [self.tableView reloadData];
+            
+            // End the display of the activity indicator for the TVC
+            [self.refreshControl endRefreshing];
+        });
+    });
+}
 
 // This method will search the tags in the provided flickrPhoto
 // and will update self.flickrTaggedPhotos with the tag<-->photo association  
