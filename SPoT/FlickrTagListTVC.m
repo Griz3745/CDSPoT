@@ -89,7 +89,7 @@
         
         // Load the Model for the MVC of this Table View Controller
         // by fetching some photos from Flickr
-        NSArray *latestPhotos = [FlickrFetcher stanfordPhotos];
+        NSArray *latestPhotos = [FlickrFetcher stanfordPhotos]; // network fetch
 
         // Decrement Network Activity Indicator counter
         [[UIApplication sharedApplication] hideNetworkActivityIndicator];

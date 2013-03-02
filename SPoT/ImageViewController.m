@@ -10,7 +10,7 @@
 //  This is code was developed in Lecture 9, Winter 2013
 
 #import "ImageViewController.h"
-#import "UIApplication+NetworkActivity.h"
+#import "FlickrCache.h"
 
 @interface ImageViewController () <UIScrollViewDelegate>
 
@@ -130,20 +130,12 @@
         // Fetch the photo from Flickr
         dispatch_queue_t downloadQueue = dispatch_queue_create("flickr photo downloader", NULL);
         dispatch_async(downloadQueue, ^{
-            // Increment Network Activity Indicator counter
-            [[UIApplication sharedApplication] showNetworkActivityIndicator];
-            
-            /* ----> */        [NSThread sleepForTimeInterval:2.0];
             
             // Save the self.imageURL for later verification
             NSURL *savedImageURL = self.imageURL;
-            
-            // Get the 'bag of bits' specified by imageURL
-            // This line actually fetches the photo from Flickr
-            NSData *imageData = [[NSData alloc] initWithContentsOfURL:self.imageURL];
-            
-            // Decrement Network Activity Indicator counter
-            [[UIApplication sharedApplication] hideNetworkActivityIndicator];
+
+            // Get the image from the Cache Directory of the App OR from Flickr
+            NSData *imageData = [FlickrCache flickrImageFromPhoto:self.imageURL];
             
             // Set the photo in the UI
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -151,7 +143,7 @@
                 if (![savedImageURL isEqual:self.imageURL]) {
                     // It never gets here on the iPhone because it always instantiates a new
                     // controller, it will probably get here on the iPad though
-#warning - check this on iPad
+#warning - test this on iPad
                     NSLog(@"Mismatched URL, discarding old one");
                 } else {
                     // Convert the NSData into a UIImage

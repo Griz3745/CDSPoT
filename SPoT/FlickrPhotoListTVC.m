@@ -77,13 +77,19 @@
                 if ([segue.destinationViewController respondsToSelector:@selector(setImageURL:)]) {
                     
                     // Build the Flickr URL for this photo
-                    NSURL *url = [FlickrFetcher urlForPhoto:self.flickrListPhotos[indexPath.row] format:FlickrPhotoFormatLarge];
+                    FlickrPhotoFormat spotPhotoFormat;
+                    if (self.splitViewController) { // iPad
+                        spotPhotoFormat = FlickrPhotoFormatOriginal;
+                    } else {
+                        spotPhotoFormat = FlickrPhotoFormatLarge;
+                    }
+                    NSURL *spotPhotoURL = [FlickrFetcher urlForPhoto:self.flickrListPhotos[indexPath.row] format:spotPhotoFormat];
                     
                     // Save the photo description, not the image
                     [self savePhoto:self.flickrListPhotos[indexPath.row]];
                     
                     // Set the photo in the destination class
-                    [segue.destinationViewController performSelector:@selector(setImageURL:) withObject:url];
+                    [segue.destinationViewController performSelector:@selector(setImageURL:) withObject:spotPhotoURL];
                     
                     // Set the title of the destination view controller
                     [segue.destinationViewController setTitle:[self cellTitleForRow:indexPath.row]];

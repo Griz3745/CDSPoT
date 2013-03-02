@@ -2,138 +2,155 @@
 //  FlickrCache.m
 //  FlickrPlaces
 //
-//  Created by Michael Grysikiewicz on 11/24/12.
+//  Created by Michael Grysikiewicz on 3/1/12.
 //  Copyright (c) 2012 Michael Grysikiewicz. All rights reserved.
+//
+//  This class has one class method, which when given a Flickr photo URL,
+//  will return the NSData for that photo.  The cache for this App will be searched first,
+//  and if not found there, the NSData for the photo will be fetched from Flickr.
+//
+//  Whenever the data for the photo URL is fetched from Flickr, it is added to the cache for this App.
+//  The size of the cache is mananaged so that it does not exceed CACHE_SIZE_LIMIT
+//
+//  NOTE: The calling method should implement running this class method in another thread
 //
 
 #import "FlickrCache.h"
 #import "SPoT.h"
-#import "FlickrFetcher.h"
+#import "UIApplication+NetworkActivity.h"
 
 @implementation FlickrCache
 
-+ (NSData *) flickrImageFromPhoto:(NSDictionary *) photo
++ (NSData *)flickrImageFromPhoto:(NSURL *)flickrPhotoURL
 {
-    // This method tries to find the image for the photo in the App's cache.
-    // If the image is found it is returned. If the image is not found it is fetched from Flickr
-    // and added to the App's cache.  If adding the photo to the cache causes the
-    // cache to exceed 10MB, then the oldest photo is removed from the cache until the
-    // cache size is less than 10MB
+    // This method tries to find the photo URL in the App's cache directory.
+    // If the URL is found it is the photo data is fetched from the cache directory and returned.
+    // If the photo URL is not found in the App's cache directory,
+    // the photo data for the URL is fetched from Flickr and added to the App's cache.
+    // If adding the photo data to the cache causes the cache to exceed CACHE_SIZE_LIMIT,
+    // then the oldest photo is removed from the cache until the
+    // cache size is less than CACHE_SIZE_LIMIT
     
+    
+#pragma mark - cache directory setup
+    // photo as NSData to be returned to the calling method
     NSData *photoData = nil;
-    
-    // Do not use the default file manager if using the fileManager delegates, alloc one instead
+
+    // Remember that [NSFileManager defaultManager] is not thread safe
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     
-    // Get the URL for the sandbox
-    NSArray *cachesInSandbox = [fileManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask];
-    NSURL *cacheDirectory = cachesInSandbox.lastObject;
+    // Get the URL for the cache sandbox; always specify NSUserDomainMask for iOS
+    NSURL *cacheDirectoryURL = [fileManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask].lastObject;
     
-    // Create the URL in the sandbox for this App
-    cacheDirectory = [cacheDirectory URLByAppendingPathComponent:SPOT_APP_CACHES_DIRECTORY];
+    // Append the name for this App to the URL
+    cacheDirectoryURL = [cacheDirectoryURL URLByAppendingPathComponent:SPOT_APP_CACHES_DIRECTORY];
     
     // Create the App's sandbox directory, if it doesn't already exist
-    if (![fileManager createDirectoryAtURL:cacheDirectory withIntermediateDirectories:YES attributes:nil error:nil])
-    {
+    if (![fileManager createDirectoryAtURL:cacheDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil]) {
         NSLog(@"----> Directory creation failed.");
     }
     
     // Create the name for the cached photo
-    NSURL *cachedPhoto = [cacheDirectory URLByAppendingPathComponent:[photo objectForKey:FLICKR_PHOTO_ID]];
-        
+    NSString *uniquePhotoID = [flickrPhotoURL lastPathComponent];
+    NSURL *cachePhotoURL = [cacheDirectoryURL URLByAppendingPathComponent:uniquePhotoID];
+    
+#pragma mark - flickr photo fetch
     // Now check to see if a cache file already exists for this photo
-    if (![cachedPhoto checkResourceIsReachableAndReturnError:nil])
-    {
-        // The photo is not in cache so fetch the photo from Flickr
-        FlickrPhotoFormat flickrPhotoFormat = FlickrPhotoFormatLarge;
-        NSURL *photoURL = [[FlickrFetcher class] urlForPhoto:photo format:flickrPhotoFormat];
+    if (![cachePhotoURL checkResourceIsReachableAndReturnError:nil]) {
+        // The photo is NOT in cache so fetch the photo from Flickr
 
-        // ----> The following line accesses the network
-        photoData = [NSData dataWithContentsOfURL:photoURL];
-// ----> */ [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:5]];
+        // Increment Network Activity Indicator counter
+        [[UIApplication sharedApplication] showNetworkActivityIndicator];
         
-        // Get the size of the fetched photo
-        NSUInteger photoSize = photoData.length;
+/* ----> */ [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
         
+        // Fetch the image data from Flickr
+        photoData = [NSData dataWithContentsOfURL:flickrPhotoURL]; // network fetch
+        
+        // Decrement Network Activity Indicator counter
+        [[UIApplication sharedApplication] hideNetworkActivityIndicator];
+       
+#pragma mark - obtain cache directory details        
         // Scan through all the files in the App's directory, code borrowed from Documentation of NSFileManager
         NSDirectoryEnumerator *dirEnumerator =
-            [fileManager enumeratorAtURL:cacheDirectory
+            [fileManager enumeratorAtURL:cacheDirectoryURL
               includingPropertiesForKeys:[NSArray arrayWithObjects:NSURLNameKey, NSURLFileSizeKey, NSURLCreationDateKey,nil]
                                  options:NSDirectoryEnumerationSkipsHiddenFiles
                             errorHandler:nil];
 
         NSUInteger cumulativeSizeOfCachedPhotos = 0;
-        NSMutableArray *arrayOfURLsInCache = [NSMutableArray array];
         NSNumber *fileSizeForCurrentURL;
+        NSMutableArray *arrayOfCacheURLs = [NSMutableArray array];
 
         // Enumerate the dirEnumerator results, each value is stored in arrayOfURLsInCache
-        for (NSURL *theURL in dirEnumerator)
-        {
+        for (NSURL *theURL in dirEnumerator) {
             // Retrieve the file size. From NSURLFileSizeKey, cached during the enumeration.
             [theURL getResourceValue:&fileSizeForCurrentURL forKey:NSURLFileSizeKey error:NULL];
             
-            // Get the cumulative size of the photos in the App directory
+            // Get the cumulative size of the photo data in the App cache directory
             cumulativeSizeOfCachedPhotos += fileSizeForCurrentURL.unsignedIntegerValue;
             
-            // Add all of the URLs to the array
-            [arrayOfURLsInCache addObject:theURL];
+            // Create a list of all of the URLs in the App cache directory
+            // (There was a 1-liner to create arrayOfCacheURLs, but it looked just like the
+            // enumerator above. Since I had to do this enumerator anyway, it seemed more
+            // convoluted to do the 1-liner)
+            [arrayOfCacheURLs addObject:theURL];
             
         }
-            
-        // If adding this photo will exceeds the 10MB limit,
-        // then delete older photos from cache until the limit is not exceeded
-        NSURL *oldestURL;
-        NSURL *currentURL;
         
-        NSDate *creationDateForOldestURL;
-        NSDate *creationDateForCurrentURL;
+#pragma mark - remove excess photos from cache        
+        NSURL *oldestCacheURL;
+        NSURL *currentCacheURL;
+        
+        NSDate *creationDateForOldestCacheURL;
+        NSDate *creationDateForCurrentCacheURL;
 
-        while ((cumulativeSizeOfCachedPhotos + photoSize) > CACHE_SIZE_LIMIT)
+        // If adding this photo will exceeds the CACHE_SIZE_LIMIT limit,
+        // then delete older photos from cache until the limit is not exceeded
+        while ((cumulativeSizeOfCachedPhotos + [photoData length]) > CACHE_SIZE_LIMIT)
         {
             // Find the oldest file
-            oldestURL = [arrayOfURLsInCache objectAtIndex:0];
-            [oldestURL getResourceValue:&creationDateForOldestURL forKey:NSURLCreationDateKey error:NULL];
+            oldestCacheURL = arrayOfCacheURLs[0]; // This wont be nil because it wont get here unless there are photos
+            [oldestCacheURL getResourceValue:&creationDateForOldestCacheURL forKey:NSURLCreationDateKey error:NULL];
             
-            // Compare the currentURL to the oldestURL
-            for (int arrayIndex = 1; arrayIndex < arrayOfURLsInCache.count; arrayIndex++)
+            // Compare the currentCacheURL to the oldestCacheURL to find the oldest. (The 1-liner try was messy)
+            for (int arrayIndex = 1; arrayIndex < arrayOfCacheURLs.count; arrayIndex++)
             {
-                currentURL = [arrayOfURLsInCache objectAtIndex:arrayIndex];
-                [currentURL getResourceValue:&creationDateForCurrentURL forKey:NSURLCreationDateKey error:NULL];
-                if ([creationDateForCurrentURL compare:creationDateForOldestURL] == NSOrderedAscending)
+                currentCacheURL = arrayOfCacheURLs[arrayIndex];
+                [currentCacheURL getResourceValue:&creationDateForCurrentCacheURL forKey:NSURLCreationDateKey error:NULL];
+                if ([creationDateForCurrentCacheURL compare:creationDateForOldestCacheURL] == NSOrderedAscending)
                 {
-                    oldestURL = currentURL;
-                    creationDateForOldestURL = creationDateForCurrentURL;
+                    oldestCacheURL = currentCacheURL;
+                    creationDateForOldestCacheURL = creationDateForCurrentCacheURL;
                 }
             }
             
             // Delete the oldest file from the App's cache
-            NSString *fileNameForOldestURL;
-            [oldestURL getResourceValue:&fileNameForOldestURL forKey:NSURLNameKey error:NULL];
-            
-            if (![fileManager removeItemAtURL:oldestURL error:nil])
+            if (![fileManager removeItemAtURL:oldestCacheURL error:nil])
             {
-                NSLog(@"Failed to remove----> %@", fileNameForOldestURL);
+                NSLog(@"Failed to remove----> %@", oldestCacheURL);
             }
             
             // Remove the oldestURL from arrayOfURLsInCache
-            [arrayOfURLsInCache removeObjectIdenticalTo:oldestURL];
+            [arrayOfCacheURLs removeObject:oldestCacheURL];
             
             // Update cumulativeSizeOfCachedPhotos
             NSNumber *fileSizeForOldestURL;
-            [oldestURL getResourceValue:&fileSizeForOldestURL forKey:NSURLFileSizeKey error:NULL];
+            [oldestCacheURL getResourceValue:&fileSizeForOldestURL forKey:NSURLFileSizeKey error:NULL];
             cumulativeSizeOfCachedPhotos -= fileSizeForOldestURL.unsignedIntegerValue;
         }
-        
+
+#pragma mark - return photo data to calling method
         // Add this photo to the cache
-        if  (![photoData writeToURL:cachedPhoto atomically:YES])
+        
+        if  (![photoData writeToURL:cachePhotoURL atomically:YES])
         {
-            NSLog(@"Writing to cache failed for----> %@", cachedPhoto);
+            NSLog(@"Writing to cache failed for----> %@", cachePhotoURL);
         }
     }
-    else
-    {
-        // Return the cached photo
-        photoData = [[NSData alloc] initWithContentsOfURL:cachedPhoto];
+    else {
+        // The photo does exist in cache, so pull the photo from cache
+        photoData = [[NSData alloc] initWithContentsOfURL:cachePhotoURL];
     }
     
     return photoData;
