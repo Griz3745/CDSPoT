@@ -25,6 +25,16 @@
     self.segueIdentifierString = @"Show Tagged Photo";
 }
 
+/* ---->
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    NSLog(@"FlickrTagPhotoListTVC Title: %@", self.title);
+    self.backButtonTitle = self.title;
+}
+----> */
+
 #pragma mark - Class specific methods
 
 // Implementation of method from abstract base class, Optional

@@ -27,7 +27,10 @@
 -(void) viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
+ 
+// ---->     NSLog(@"FlickrRecentPhotoListTVC Title: %@", self.title);
+// ---->     self.backButtonTitle = self.title;
+   
     // Get the list of photos from persistent storage
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSArray *recentPhotos = [defaults objectForKey:RECENT_PHOTOS_KEY];

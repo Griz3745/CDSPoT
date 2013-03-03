@@ -20,4 +20,6 @@
 - (NSString *)cellTitleForRow:(NSUInteger)row;
 - (NSString *)cellSubTitleForRow:(NSUInteger)row;
 
+// ----> @property (nonatomic, strong) NSString *backButtonTitle;
+
 @end

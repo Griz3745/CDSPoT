@@ -21,6 +21,9 @@
 @property (nonatomic, getter = allowAutoZoom) BOOL autoZoom; // borrowed 'autoZoom' from Joan-Carlos
 
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activitySpinner;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *titleBarButtonItem;
+
+@property (weak, nonatomic) IBOutlet UIToolbar *toolBar;
 
 @end
 
@@ -45,6 +48,14 @@
     return _imageView;
 }
 
+- (void)setTitle:(NSString *)title
+{
+    super.title = title;
+    
+    // Override the setTitle method so that IF this TVC has a
+    // titleBarButtonItem, then it's title will be set as well
+    self.titleBarButtonItem.title = title;
+}
 - (void)viewDidLayoutSubviews // from AutoLayout
 {
     [super viewDidLayoutSubviews];
@@ -55,8 +66,37 @@
     }
 }
 
+- (void)resetToolBarBackButton:(UIBarButtonItem *)splitViewBarButtonItem
+{
+    UIToolbar *toolBar = self.toolBar;
+    NSMutableArray *toolBarItems = [toolBar.items mutableCopy];
+    
+    // Remove existing back button
+    if (self.splitViewBarButtonItem) {
+        [toolBarItems removeObject:self.splitViewBarButtonItem];
+    }
+    
+    // Put the bar button on the left of the toolbar
+    if (splitViewBarButtonItem) {
+        [toolBarItems insertObject:splitViewBarButtonItem atIndex:0];
+    }
+    
+    // Add the update toolBarItems bar to the toolbar
+    toolBar.items = toolBarItems;
+}
+
+- (void)setSplitViewBarButtonItem:(UIBarButtonItem *)splitViewBarButtonItem
+{
+    [self resetToolBarBackButton:splitViewBarButtonItem];
+    
+    // Keep this at the end because of the code that removes the old button
+    _splitViewBarButtonItem =  splitViewBarButtonItem;
+}
+
 - (void)viewDidLoad
 {
+    [super viewDidLoad];
+    
     // Add the image view to the scroll view
     [self.scrollView addSubview:self.imageView];
     
@@ -67,6 +107,13 @@
     // For the zooming protocol, all methods are optional,
     // but still have to do it so that it knows which view to zoom
     self.scrollView.delegate = self;
+    
+    self.titleBarButtonItem.title = self.title;
+    
+    // Have to reset the tool bar back button, because
+    // outlets weren't set when the setter was called from
+    // prepare for segue
+    [self resetToolBarBackButton:self.splitViewBarButtonItem];
     
     [self resetImage];
 }
@@ -117,7 +164,8 @@
     // is called externally, like from prepareForSegue, but
     // when this method(resetImage) is called from viewDidLoad
     // self.scrollView will not be nil
-    if (self.scrollView) {
+    if ((self.scrollView) &&
+        (self.imageURL)) {
         
         // Blank out any previous setting
         self.scrollView.contentSize = CGSizeZero;
@@ -142,8 +190,11 @@
                 // Verify that the user has not already selected a new URL
                 if (![savedImageURL isEqual:self.imageURL]) {
                     // It never gets here on the iPhone because it always instantiates a new
-                    // controller, it will probably get here on the iPad though
-#warning - test this on iPad
+                    // controller, it doesn't get here for the iPad either
+                    // because it is using a 'Replace Segue' which also
+                    // instantiates a new controller
+                    // If I were reusing the view controller, like I did
+                    // in the Summer '12 class, it could get here
                     NSLog(@"Mismatched URL, discarding old one");
                 } else {
                     // Convert the NSData into a UIImage

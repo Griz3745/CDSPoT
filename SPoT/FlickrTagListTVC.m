@@ -72,6 +72,16 @@
                   forControlEvents:UIControlEventValueChanged];
 }
 
+/* ---->
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+// ---->     NSLog(@"FlickrTagListTVC Title: %@", self.title);
+// ---->     self.backButtonTitle = self.title;
+}
+----> */
+
 #pragma mark - Class specific methods
 
 - (void)loadStanfordFlickrPhotos
@@ -85,7 +95,7 @@
         // Increment Network Activity Indicator counter
         [[UIApplication sharedApplication] showNetworkActivityIndicator];
         
-/* ----> */        [NSThread sleepForTimeInterval:2.0];
+// ----> */        [NSThread sleepForTimeInterval:2.0];
         
         // Load the Model for the MVC of this Table View Controller
         // by fetching some photos from Flickr

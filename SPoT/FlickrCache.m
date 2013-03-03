@@ -62,7 +62,7 @@
         // Increment Network Activity Indicator counter
         [[UIApplication sharedApplication] showNetworkActivityIndicator];
         
-/* ----> */ [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
+// ----> */ [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
         
         // Fetch the image data from Flickr
         photoData = [NSData dataWithContentsOfURL:flickrPhotoURL]; // network fetch

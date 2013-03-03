@@ -52,7 +52,7 @@
         <!--Flickr Tag ListTVC - SPoT-->
         <scene sceneID="4Sz-n5-vTe">
             <objects>
-                <tableViewController id="0kk-AA-7WX" customClass="FlickrTagListTVC" sceneMemberID="viewController">
+                <tableViewController title="SPoT" id="0kk-AA-7WX" customClass="FlickrTagListTVC" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="ZFz-qt-RSu">
                         <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -237,6 +237,6 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="VU7-VG-AJf"/>
+        <segue reference="o8K-Rj-U2a"/>
     </inferredMetricsTieBreakers>
 </document>

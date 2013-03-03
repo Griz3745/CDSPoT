@@ -13,4 +13,7 @@
 // This is the Model for this MVC, can be set externally
 @property (nonatomic, strong) NSURL *imageURL;
 
+// Allow the masterViewController to manage this button
+@property (nonatomic, strong) UIBarButtonItem *splitViewBarButtonItem;
+
 @end

@@ -15,11 +15,39 @@
 
 #import "FlickrListTVC.h"
 
+/* ----> 
 @interface FlickrListTVC ()
 
 @end
+----> */
 
 @implementation FlickrListTVC
+
+/* ----> 
+ static NSString *_backButtonTitle;
+
+- (NSString *)backButtonTitle
+{
+    if (!_backButtonTitle) {
+        _backButtonTitle = [[NSString alloc] init];
+    }
+    
+    return _backButtonTitle;
+}
+
+- (void)setBackButtonTitle:(NSString *)backButtonTitle
+{
+    _backButtonTitle = backButtonTitle;
+}
+
+-(void)awakeFromNib
+{
+    [super awakeFromNib];
+    
+    self.backButtonTitle = @"SPoT";
+    NSLog(@"FlickrListTVC:awakeFromNib Title: %@", self.backButtonTitle);
+}
+----> */
 
 - (void)viewDidLoad
 {
@@ -28,6 +56,16 @@
     // Preserve selection between presentations.
     self.clearsSelectionOnViewWillAppear = NO; 
 }
+
+/* ----> 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+//    NSLog(@"FlickrListTVC Title: %@", self.title);
+//    self.backButtonTitle = self.title;
+}
+----> */
 
 #pragma mark - Class specific methods
 

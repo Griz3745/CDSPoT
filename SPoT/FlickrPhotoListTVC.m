@@ -16,7 +16,20 @@
 #import "FlickrPhotoListTVC.h"
 #import "FlickrFetcher.h"
 
+@interface FlickrPhotoListTVC() <UISplitViewControllerDelegate>
+
+@end
+
 @implementation FlickrPhotoListTVC
+
+-(void)awakeFromNib
+{
+    [super awakeFromNib];
+    
+    self.splitViewController.delegate = self;
+// ----> //    self.backButtonTitle = @"SPoT";
+// ----> //    NSLog(@"FlickrPhotoListTVC:awakeFromNib Title: %@", self.backButtonTitle);
+}
 
 - (void)viewDidLoad
 {
@@ -26,6 +39,16 @@
     // calling an abstract method
     [self alphabetizePhotoList];
 }
+
+/* ---->
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+// ----> //    NSLog(@"FlickrPhotoListTVC Title: %@", self.title);
+// ----> //    self.backButtonTitle = self.title;
+}
+----> */
 
 #pragma mark - Class specific methods
 
@@ -68,6 +91,34 @@
     return [[self.flickrListPhotos objectAtIndex:row] valueForKeyPath:FLICKR_PHOTO_DESCRIPTION];
 }
 
+// Verifies that the returned class implements the getter/setter: splitViewBarButtonItem
+- (id)splitViewDetailWithBarButtonItem
+{
+    id detail = [self.splitViewController.viewControllers lastObject];
+    if (![detail respondsToSelector:@selector(setSplitViewBarButtonItem:)] ||
+        ![detail respondsToSelector:@selector(splitViewBarButtonItem)]) {
+        detail = nil;
+    }
+    
+    return detail;
+}
+
+- (void)transferSplitViewBarButtonItemToViewController:(id)destinationViewController
+{
+    // Get the old splitViewBarButtonItem
+    UIBarButtonItem *splitViewBarButtonItem =
+        [[self splitViewDetailWithBarButtonItem] performSelector:@selector(splitViewBarButtonItem)];
+    
+    // Remove the old splitViewBarButtonItem
+    [[self splitViewDetailWithBarButtonItem] performSelector:@selector(setSplitViewBarButtonItem:) withObject:nil];
+    
+    // Put the splitViewBarButtonItem on the new destinationViewController
+    if (splitViewBarButtonItem) {
+// ---->        splitViewBarButtonItem.title = self.backButtonTitle;
+        [destinationViewController performSelector:@selector(setSplitViewBarButtonItem:) withObject:splitViewBarButtonItem];
+    }
+}
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([sender isKindOfClass:[UITableViewCell class]]) {
@@ -93,6 +144,9 @@
                     
                     // Set the title of the destination view controller
                     [segue.destinationViewController setTitle:[self cellTitleForRow:indexPath.row]];
+                    
+                    // Move the splitViewBarButtonItem when the image is switched
+                    [self transferSplitViewBarButtonItemToViewController:segue.destinationViewController];
                 }
             }
         }
@@ -105,4 +159,37 @@
 {
     return [self.flickrListPhotos count];
 }
+
+#pragma mark - <SplitViewControllerDelegate>
+
+- (BOOL)splitViewController:(UISplitViewController *)svc
+   shouldHideViewController:(UIViewController *)vc
+              inOrientation:(UIInterfaceOrientation)orientation
+{
+    return UIInterfaceOrientationIsPortrait(orientation);
+}
+
+- (void)splitViewController:(UISplitViewController *)svc
+     willHideViewController:(UIViewController *)aViewController
+          withBarButtonItem:(UIBarButtonItem *)barButtonItem
+       forPopoverController:(UIPopoverController *)pc
+{
+    // Set the barButton title to the sending VC title
+// ---->    barButtonItem.title = self.backButtonTitle;
+    barButtonItem.title = @"Photo List";
+    
+    // Add the button in the detailViewController
+    [[self splitViewDetailWithBarButtonItem] performSelector:@selector(setSplitViewBarButtonItem:)
+                                                  withObject:barButtonItem];
+}
+
+- (void)splitViewController:(UISplitViewController *)svc
+     willShowViewController:(UIViewController *)aViewController
+  invalidatingBarButtonItem:(UIBarButtonItem *)barButtonItem
+{
+    // Remove the button in the detailViewController
+    [[self splitViewDetailWithBarButtonItem] performSelector:@selector(setSplitViewBarButtonItem:)
+                                                  withObject:nil];
+}
+
 @end
