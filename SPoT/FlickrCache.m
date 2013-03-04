@@ -61,7 +61,21 @@
     return photoData;
 }
 
-+ (void)makeRoomInCache:(NSURL *)cacheDirectoryURL forPhoto:(NSData *)photoData
+// I 'Borrowed' the data structure used in makeRoomInCache: and buildCashFileDetails: from Joan.
+// After comparing my original implementation with his implementation, I liked his much better.
+// The data structure that he came up with made it much easier to properly delete excess files from cache.
+//
+// *** Since I am not getting paid to write this code, and I am not receiving a grade for this code,
+// that makes this a pure learning exercise.  Thank you Joan :) ***
+
+#define DATE_KEY @"date"
+#define BYTES_KEY @"bytes"
+#define URL_KEY @"url"
+#define SUM_OF_BYTES_KEY @"@sum.bytes"
+
+// Create the array of dictionaries
+// Each dictionary contains information about a file in cache
++ (NSArray *)buildCashFileDetails:(NSURL *)cacheDirectoryURL
 {
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     
@@ -72,52 +86,51 @@
                          options:NSDirectoryEnumerationSkipsHiddenFiles
                     errorHandler:nil];
     
-    NSUInteger cumulativeSizeOfCachedPhotos = 0;
-    NSNumber *fileSizeForCurrentURL;
-    NSMutableArray *arrayOfCacheURLs = [NSMutableArray array];
-    
-    // Enumerate the dirEnumerator results, each value is stored in arrayOfURLsInCache
+    // Each element of the array is a dictionary of file information containing 3 items: Date, Size, and URL
+    NSMutableArray *filesInCache = [[NSMutableArray alloc] init]; 
+        
+    // Process each file in the Cache Directory
     for (NSURL *theURL in dirEnumerator) {
-        // Retrieve the file size. From NSURLFileSizeKey, cached during the enumeration.
+        // Retrieve the file size.
+        NSNumber *fileSizeForCurrentURL; // Assures the value is zero before the fetch
         [theURL getResourceValue:&fileSizeForCurrentURL forKey:NSURLFileSizeKey error:NULL];
         
-        // Get the cumulative size of the photo data in the App cache directory
-        cumulativeSizeOfCachedPhotos += fileSizeForCurrentURL.unsignedIntegerValue;
+        // Retrieve the file date.
+        NSDate   *fileDateForCurrentURL; // Assures the value is zero before the fetch
+        [theURL getResourceValue:&fileDateForCurrentURL forKey:NSURLContentAccessDateKey error:NULL];
         
-        // Create a list of all of the URLs in the App cache directory
-        // (There was a 1-liner to create arrayOfCacheURLs, but it looked just like the
-        // enumerator above. Since I had to do this enumerator anyway, it seemed more
-        // convoluted to do the 1-liner)
-        [arrayOfCacheURLs addObject:theURL];
-        
+        // Store the file information in the array
+        [filesInCache addObject:@{DATE_KEY : fileDateForCurrentURL, // Each one of these are a
+                                 BYTES_KEY : fileSizeForCurrentURL, // dictionary Key:Value pair
+                                   URL_KEY : theURL}];
     }
     
-#pragma mark - remove excess photos from cache
-    NSURL *oldestCacheURL;
-    NSURL *currentCacheURL;
+    // Use the DATE_KEY field to sort the array of file information (each one is an NSDictionary)
+    NSSortDescriptor *key = [[NSSortDescriptor alloc] initWithKey:DATE_KEY ascending:YES]; // oldest is first
+    return [filesInCache sortedArrayUsingDescriptors:@[key]];
+}
+
+// Use an array of file information to make room in the Cache directory for the photoData
++ (void)makeRoomInCache:(NSURL *)cacheDirectoryURL forPhoto:(NSData *)photoData
+{
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
     
-    NSDate *accessDateForOldestCacheURL;
-    NSDate *accessDateForCurrentCacheURL;
+    NSArray *filesInCache = [self buildCashFileDetails:cacheDirectoryURL];
+    
+    // Calculate the size of the cache by adding the sizes of the files - Joan 'Magic' code, 1-liner
+    // I understand it, but I would have never thought of it, but I will now!
+    NSUInteger cacheSizeBeforeAddingPhotoData = [[filesInCache valueForKeyPath:SUM_OF_BYTES_KEY] integerValue];
+
+    NSURL *oldestCacheURL;
     
     // If adding this photo will exceeds the CACHE_SIZE_LIMIT limit,
     // then delete older photos from cache until the limit is not exceeded
-    while ((cumulativeSizeOfCachedPhotos + [photoData length]) > CACHE_SIZE_LIMIT)
-    {
-        // Find the oldest file
-        oldestCacheURL = arrayOfCacheURLs[0]; // This wont be nil because it wont get here unless there are photos
-        [oldestCacheURL getResourceValue:&accessDateForOldestCacheURL forKey:NSURLContentAccessDateKey error:NULL];
-        
-        // Compare the currentCacheURL to the oldestCacheURL to find the oldest. (The 1-liner try was messy)
-        for (int arrayIndex = 1; arrayIndex < arrayOfCacheURLs.count; arrayIndex++)
-        {
-            currentCacheURL = arrayOfCacheURLs[arrayIndex];
-            [currentCacheURL getResourceValue:&accessDateForCurrentCacheURL forKey:NSURLContentAccessDateKey error:NULL];
-            if ([accessDateForCurrentCacheURL compare:accessDateForOldestCacheURL] == NSOrderedAscending)
-            {
-                oldestCacheURL = currentCacheURL;
-                accessDateForOldestCacheURL = accessDateForCurrentCacheURL;
-            }
-        }
+    for (int loopCounter = 0;
+         ((cacheSizeBeforeAddingPhotoData + [photoData length]) > CACHE_SIZE_LIMIT);
+          loopCounter++) {
+             
+        // Since the array has been sorted the first item has the oldest date
+        oldestCacheURL = filesInCache[loopCounter][URL_KEY]; // [URL_KEY] means 'return the value for that key
         
         // Delete the oldest file from the App's cache
         if (![fileManager removeItemAtURL:oldestCacheURL error:nil])
@@ -125,13 +138,8 @@
             NSLog(@"Failed to remove----> %@", oldestCacheURL);
         }
         
-        // Remove the oldestURL from arrayOfURLsInCache
-        [arrayOfCacheURLs removeObject:oldestCacheURL];
-        
-        // Update cumulativeSizeOfCachedPhotos
-        NSNumber *fileSizeForOldestURL;
-        [oldestCacheURL getResourceValue:&fileSizeForOldestURL forKey:NSURLFileSizeKey error:NULL];
-        cumulativeSizeOfCachedPhotos -= fileSizeForOldestURL.unsignedIntegerValue;
+        // Update the size of of what is left in the cashe
+        cacheSizeBeforeAddingPhotoData -= [filesInCache[loopCounter][BYTES_KEY] unsignedIntegerValue];
     }
 }
 
