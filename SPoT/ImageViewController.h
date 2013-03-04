@@ -5,6 +5,10 @@
 //  Created by Michael Grysikiewicz on 2/23/13.
 //  Copyright (c) 2013 Michael Grysikiewicz. All rights reserved.
 //
+//  This code implements, in the UI, the display of a photo image
+//
+//  This is code was developed in Lecture 9, Winter 2013
+//
 
 #import <UIKit/UIKit.h>
 

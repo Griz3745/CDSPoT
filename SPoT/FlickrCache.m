@@ -14,6 +14,10 @@
 //
 //  NOTE: The calling method should implement running this class method in another thread
 //
+//  *** I debated back and forth about breaking this single method into several methods.  I don't like
+//  having such a long method, but there were no parts of the code that were repeated and would logically
+//  make a subroutine.  There were also local variables, like FileManager and others that were used throughout.
+//  It just seemed messier to break it apart, than to leave it as a single method
 
 #import "FlickrCache.h"
 #import "SPoT.h"
@@ -39,11 +43,12 @@
     // Remember that [NSFileManager defaultManager] is not thread safe
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     
-    // Get the URL for the cache sandbox; always specify NSUserDomainMask for iOS
+    // Get the URL for the cache sandbox
+    // (Always specify NSUserDomainMask for iOS - Apple Documentation)
     NSURL *cacheDirectoryURL = [fileManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask].lastObject;
     
     // Append the name for this App to the URL
-    cacheDirectoryURL = [cacheDirectoryURL URLByAppendingPathComponent:SPOT_APP_CACHES_DIRECTORY];
+    cacheDirectoryURL = [cacheDirectoryURL URLByAppendingPathComponent:RECENT_PHOTO_IMAGES_CACHES_DIRECTORY];
     
     // Create the App's sandbox directory, if it doesn't already exist
     if (![fileManager createDirectoryAtURL:cacheDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil]) {
@@ -65,7 +70,8 @@
 // ----> */ [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
         
         // Fetch the image data from Flickr
-        photoData = [NSData dataWithContentsOfURL:flickrPhotoURL]; // network fetch
+        // NOTE: The calling method should implement running this class method in another thread
+        photoData = [NSData dataWithContentsOfURL:flickrPhotoURL]; // Network Activity!
         
         // Decrement Network Activity Indicator counter
         [[UIApplication sharedApplication] hideNetworkActivityIndicator];
@@ -74,7 +80,7 @@
         // Scan through all the files in the App's directory, code borrowed from Documentation of NSFileManager
         NSDirectoryEnumerator *dirEnumerator =
             [fileManager enumeratorAtURL:cacheDirectoryURL
-              includingPropertiesForKeys:[NSArray arrayWithObjects:NSURLNameKey, NSURLFileSizeKey, NSURLCreationDateKey,nil]
+              includingPropertiesForKeys:[NSArray arrayWithObjects:NSURLFileSizeKey, NSURLContentAccessDateKey,nil]
                                  options:NSDirectoryEnumerationSkipsHiddenFiles
                             errorHandler:nil];
 
@@ -102,8 +108,8 @@
         NSURL *oldestCacheURL;
         NSURL *currentCacheURL;
         
-        NSDate *creationDateForOldestCacheURL;
-        NSDate *creationDateForCurrentCacheURL;
+        NSDate *accessDateForOldestCacheURL;
+        NSDate *accessDateForCurrentCacheURL;
 
         // If adding this photo will exceeds the CACHE_SIZE_LIMIT limit,
         // then delete older photos from cache until the limit is not exceeded
@@ -111,17 +117,17 @@
         {
             // Find the oldest file
             oldestCacheURL = arrayOfCacheURLs[0]; // This wont be nil because it wont get here unless there are photos
-            [oldestCacheURL getResourceValue:&creationDateForOldestCacheURL forKey:NSURLCreationDateKey error:NULL];
+            [oldestCacheURL getResourceValue:&accessDateForOldestCacheURL forKey:NSURLContentAccessDateKey error:NULL];
             
             // Compare the currentCacheURL to the oldestCacheURL to find the oldest. (The 1-liner try was messy)
             for (int arrayIndex = 1; arrayIndex < arrayOfCacheURLs.count; arrayIndex++)
             {
                 currentCacheURL = arrayOfCacheURLs[arrayIndex];
-                [currentCacheURL getResourceValue:&creationDateForCurrentCacheURL forKey:NSURLCreationDateKey error:NULL];
-                if ([creationDateForCurrentCacheURL compare:creationDateForOldestCacheURL] == NSOrderedAscending)
+                [currentCacheURL getResourceValue:&accessDateForCurrentCacheURL forKey:NSURLContentAccessDateKey error:NULL];
+                if ([accessDateForCurrentCacheURL compare:accessDateForOldestCacheURL] == NSOrderedAscending)
                 {
                     oldestCacheURL = currentCacheURL;
-                    creationDateForOldestCacheURL = creationDateForCurrentCacheURL;
+                    accessDateForOldestCacheURL = accessDateForCurrentCacheURL;
                 }
             }
             

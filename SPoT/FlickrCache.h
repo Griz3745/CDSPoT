@@ -22,6 +22,6 @@
 //
 //  NOTE: The calling method should implement running this class method in another thread
 //
-+ (NSData *) flickrImageFromPhoto:(NSURL *)photo;
++ (NSData *) flickrImageFromPhoto:(NSURL *)flickrPhotoURL;
 
 @end

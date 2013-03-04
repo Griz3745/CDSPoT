@@ -8,6 +8,7 @@
 //  This code implements, in the UI, the display of a photo image
 //
 //  This is code was developed in Lecture 9, Winter 2013
+//
 
 #import "ImageViewController.h"
 #import "FlickrCache.h"
@@ -20,10 +21,10 @@
 // Assignment IV, Requirement 6 says to turn off auto zooming if the user performs a zoom(pinch)
 @property (nonatomic, getter = allowAutoZoom) BOOL autoZoom; // borrowed 'autoZoom' from Joan-Carlos
 
-@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activitySpinner;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *titleBarButtonItem;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activitySpinner; // while image loading
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *titleBarButtonItem; // title for image, iPad
 
-@property (weak, nonatomic) IBOutlet UIToolbar *toolBar;
+@property (weak, nonatomic) IBOutlet UIToolbar *toolBar; // needed to add/remove the back button
 
 @end
 
@@ -53,36 +54,8 @@
     super.title = title;
     
     // Override the setTitle method so that IF this TVC has a
-    // titleBarButtonItem, then it's title will be set as well
+    // titleBarButtonItem (iPad), then it's title will be set as well
     self.titleBarButtonItem.title = title;
-}
-- (void)viewDidLayoutSubviews // from AutoLayout
-{
-    [super viewDidLayoutSubviews];
-    
-    if ((self.allowAutoZoom) && (self.imageView.image)) { // image could be null because of threading
-            // Set the full screen zoom for the image view within the scroll view
-            [self.scrollView zoomToRect:[self setFullScreenImageZoom] animated:NO];
-    }
-}
-
-- (void)resetToolBarBackButton:(UIBarButtonItem *)splitViewBarButtonItem
-{
-    UIToolbar *toolBar = self.toolBar;
-    NSMutableArray *toolBarItems = [toolBar.items mutableCopy];
-    
-    // Remove existing back button
-    if (self.splitViewBarButtonItem) {
-        [toolBarItems removeObject:self.splitViewBarButtonItem];
-    }
-    
-    // Put the bar button on the left of the toolbar
-    if (splitViewBarButtonItem) {
-        [toolBarItems insertObject:splitViewBarButtonItem atIndex:0];
-    }
-    
-    // Add the update toolBarItems bar to the toolbar
-    toolBar.items = toolBarItems;
 }
 
 - (void)setSplitViewBarButtonItem:(UIBarButtonItem *)splitViewBarButtonItem
@@ -118,10 +91,40 @@
     [self resetImage];
 }
 
+- (void)viewDidLayoutSubviews // from AutoLayout
+{
+    [super viewDidLayoutSubviews];
+    
+    if ((self.allowAutoZoom) && (self.imageView.image)) { // image could be null because of threading
+            // Set the full screen zoom for the image view within the scroll view after rotation
+            [self.scrollView zoomToRect:[self fullScreenImageZoom] animated:NO];
+    }
+}
+
 #pragma mark - Class specific methods
 
+// Create a new 'back' button for the image title in self.toolBar
+- (void)resetToolBarBackButton:(UIBarButtonItem *)splitViewBarButtonItem
+{ // From Lecture 11 Slides
+    UIToolbar *toolBar = self.toolBar;
+    NSMutableArray *toolBarItems = [toolBar.items mutableCopy];
+    
+    // Remove existing back button
+    if (self.splitViewBarButtonItem) {
+        [toolBarItems removeObject:self.splitViewBarButtonItem];
+    }
+    
+    // Put the new bar button on the left of the toolbar
+    if (splitViewBarButtonItem) {
+        [toolBarItems insertObject:splitViewBarButtonItem atIndex:0];
+    }
+    
+    // Add the updated toolBarItems bar to the toolbar
+    toolBar.items = toolBarItems;
+}
+
 // Build a CGRect used to display as much of the image as possible, without any bordering white space
-- (CGRect)setFullScreenImageZoom
+- (CGRect)fullScreenImageZoom
 {
     // Frankly, I struggled with the code in this method. It works and I understand it when
     // I think about it for a while, but it is not easily intuitive for me
@@ -142,7 +145,7 @@
                              self.scrollView.bounds.size.height) /
                              self.scrollView.bounds.size.width;
     }
-    else  { // The scrollView is narrower than the image, keep the image height
+    else  { // The image is wider than the scrollView, keep the image height
         
         // Use the image height and calculate the width
         smallerRectHeight = self.imageView.image.size.height;
@@ -175,7 +178,9 @@
         // Start the activity indicatior signaling an image load
         [self.activitySpinner startAnimating];
 
-        // Fetch the photo from Flickr
+        // Fetch the photo from Cache or Flickr
+        // (The thread is at this level, instead of inside the FlickrCache class method
+        //  because it was easier to process the returned image data here)
         dispatch_queue_t downloadQueue = dispatch_queue_create("flickr photo downloader", NULL);
         dispatch_async(downloadQueue, ^{
             
@@ -183,7 +188,8 @@
             NSURL *savedImageURL = self.imageURL;
 
             // Get the image from the Cache Directory of the App OR from Flickr
-            NSData *imageData = [FlickrCache flickrImageFromPhoto:self.imageURL];
+            // (Network activity indicators are inside the FlickrCache class method)
+            NSData *imageData = [FlickrCache flickrImageFromPhoto:self.imageURL]; // Network Activity!
             
             // Set the photo in the UI
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -214,7 +220,7 @@
                         self.imageView.frame = CGRectMake(0, 0, image.size.width, image.size.height);
                         
                         // Set the zoom scale when the image is first loaded
-                        [self.scrollView zoomToRect:[self setFullScreenImageZoom] animated:NO];
+                        [self.scrollView zoomToRect:[self fullScreenImageZoom] animated:NO];
                     }
                 }
                 

@@ -27,8 +27,6 @@
     [super awakeFromNib];
     
     self.splitViewController.delegate = self;
-// ----> //    self.backButtonTitle = @"SPoT";
-// ----> //    NSLog(@"FlickrPhotoListTVC:awakeFromNib Title: %@", self.backButtonTitle);
 }
 
 - (void)viewDidLoad
@@ -39,16 +37,6 @@
     // calling an abstract method
     [self alphabetizePhotoList];
 }
-
-/* ---->
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
-// ----> //    NSLog(@"FlickrPhotoListTVC Title: %@", self.title);
-// ----> //    self.backButtonTitle = self.title;
-}
-----> */
 
 #pragma mark - Class specific methods
 
@@ -103,6 +91,7 @@
     return detail;
 }
 
+// Move the button from the old TVC and put it on the new TVC, code from Lecture 11 Slides
 - (void)transferSplitViewBarButtonItemToViewController:(id)destinationViewController
 {
     // Get the old splitViewBarButtonItem
@@ -114,7 +103,6 @@
     
     // Put the splitViewBarButtonItem on the new destinationViewController
     if (splitViewBarButtonItem) {
-// ---->        splitViewBarButtonItem.title = self.backButtonTitle;
         [destinationViewController performSelector:@selector(setSplitViewBarButtonItem:) withObject:splitViewBarButtonItem];
     }
 }
@@ -175,7 +163,6 @@
        forPopoverController:(UIPopoverController *)pc
 {
     // Set the barButton title to the sending VC title
-// ---->    barButtonItem.title = self.backButtonTitle;
     barButtonItem.title = @"Photo List";
     
     // Add the button in the detailViewController

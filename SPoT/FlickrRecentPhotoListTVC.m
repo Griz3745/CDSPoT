@@ -28,12 +28,9 @@
 {
     [super viewWillAppear:animated];
  
-// ---->     NSLog(@"FlickrRecentPhotoListTVC Title: %@", self.title);
-// ---->     self.backButtonTitle = self.title;
-   
     // Get the list of photos from persistent storage
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSArray *recentPhotos = [defaults objectForKey:RECENT_PHOTOS_KEY];
+    NSArray *recentPhotos = [defaults objectForKey:RECENT_PHOTOS_NSUSERDEFAULTS_KEY];
     
     if (recentPhotos)
     {

@@ -25,16 +25,6 @@
     self.segueIdentifierString = @"Show Tagged Photo";
 }
 
-/* ---->
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
-    NSLog(@"FlickrTagPhotoListTVC Title: %@", self.title);
-    self.backButtonTitle = self.title;
-}
-----> */
-
 #pragma mark - Class specific methods
 
 // Implementation of method from abstract base class, Optional
@@ -45,13 +35,13 @@
     
     // The NSUserDefaults for this app will be an NSArray of NSDictionaries (the photo info)
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSMutableArray *recentPhotos = [[defaults objectForKey:RECENT_PHOTOS_KEY] mutableCopy];
+    NSMutableArray *recentPhotos = [[defaults objectForKey:RECENT_PHOTOS_NSUSERDEFAULTS_KEY] mutableCopy];
     if (!recentPhotos) recentPhotos = [[NSMutableArray alloc] init];
     
     // If this photo is not already in recentPhotos, then add it and synchronize NSUserDefaults
     BOOL photoFound = !([recentPhotos indexOfObject:flickrPhoto] == NSNotFound);
     
-    if (!photoFound)
+    if (!photoFound) // Add photo to NSUserDefaults
     {
         // Limit the size of the persistent storage
         if ([recentPhotos count] >= MAX_PERSISTENT_PHOTOS) {
@@ -59,13 +49,12 @@
         }
         
         // Add this photo to the beginning of the recentPhotos array
-        if (flickrPhoto)
-        {
+        if (flickrPhoto) {
             [recentPhotos insertObject:flickrPhoto atIndex:0];
         }
         
         // Update NSUserDefaults
-        [defaults setObject:recentPhotos forKey:RECENT_PHOTOS_KEY];
+        [defaults setObject:recentPhotos forKey:RECENT_PHOTOS_NSUSERDEFAULTS_KEY];
         [defaults synchronize];
     }
 }

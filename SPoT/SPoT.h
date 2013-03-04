@@ -7,7 +7,7 @@
 //
 //  General information that is used throughout the SPoT App
 
-#define RECENT_PHOTOS_KEY @"SPoTApp.RecentPhotos"
-#define SPOT_APP_CACHES_DIRECTORY @"SPoTApp.CachesDirectory"
+#define RECENT_PHOTOS_NSUSERDEFAULTS_KEY @"SPoTApp.RecentPhotos"
+#define RECENT_PHOTO_IMAGES_CACHES_DIRECTORY @"RecentPhotoImages"
 #define MAX_PERSISTENT_PHOTOS 8
 #define CACHE_SIZE_LIMIT 3000000

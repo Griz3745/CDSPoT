@@ -24,7 +24,7 @@
 // The dictionary Value is an NSArray of photos contining that Tag 
 @property (strong, nonatomic) NSDictionary *flickrTaggedPhotos;
 
-// tagList is an array of tags that match the tags in the flickrTaggedPhotos NSDictionary
+// tagList is an array of Tags that match the tags in the flickrTaggedPhotos NSDictionary
 // ** I hate having to have a seperate data structure for the tags, but the
 // tableViewController needs to access by a subscript, and I couldn't find a
 // way to access the NSDictionary by subscript.
@@ -72,16 +72,6 @@
                   forControlEvents:UIControlEventValueChanged];
 }
 
-/* ---->
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
-// ---->     NSLog(@"FlickrTagListTVC Title: %@", self.title);
-// ---->     self.backButtonTitle = self.title;
-}
-----> */
-
 #pragma mark - Class specific methods
 
 - (void)loadStanfordFlickrPhotos
@@ -89,8 +79,8 @@
     // Start the display of the activity indicator for the TVC
     [self.refreshControl beginRefreshing];
     
-    // Fetch the photo from Flickr
-    dispatch_queue_t downloadQueue = dispatch_queue_create("flickr photo list downloader", NULL);
+    // Fetch the photo array from Flickr
+    dispatch_queue_t downloadQueue = dispatch_queue_create("flickr photo array downloader", NULL);
     dispatch_async(downloadQueue, ^{
         // Increment Network Activity Indicator counter
         [[UIApplication sharedApplication] showNetworkActivityIndicator];
@@ -99,7 +89,7 @@
         
         // Load the Model for the MVC of this Table View Controller
         // by fetching some photos from Flickr
-        NSArray *latestPhotos = [FlickrFetcher stanfordPhotos]; // network fetch
+        NSArray *latestPhotos = [FlickrFetcher stanfordPhotos]; // NETWORK Activity!
 
         // Decrement Network Activity Indicator counter
         [[UIApplication sharedApplication] hideNetworkActivityIndicator];
@@ -109,7 +99,7 @@
             self.flickrTaggedPhotos = nil;
             self.tagList = nil;
             
-            // Keep self.flickrPhotos in the main thread
+            // Only access self.flickrPhotos in the main thread
             self.flickrPhotos = latestPhotos;
             
             // Build the list of photo tags
@@ -117,6 +107,7 @@
                 [self addPhotoToFlickrTaggedPhotos:flickrPhoto];
             }
             
+            // Build the list of tags found in self.flickrTaggedPhotos NSDictionary
             self.tagList = [self.flickrTaggedPhotos allKeys]; // Recommended by Joan-Carles
             
             // Alphabetically sort the tags
@@ -153,7 +144,8 @@
             }
         }
         
-        // Capitalize the tags (Can't assign to itself in fast enumeration)
+        // Capitalize the tags (Can't assign to itself in fast enumeration above)
+        // Capitalize the string per Assignment IV, Requirement 3
         for (int loopCounter = 0; loopCounter < [tagsToProcess count]; loopCounter++)
         {
             tagsToProcess[loopCounter] = [tagsToProcess[loopCounter] capitalizedString];
@@ -161,6 +153,8 @@
         
         // Add this photo to the array of photos for this tag
         for (NSString *tag in tagsToProcess) {
+            
+            // Get the array of photos already associated with tag
             NSMutableArray *taggedPhotos = [[mutableFlickrTaggedPhotos valueForKey:tag] mutableCopy];
             
             // if taggedPhotos is nil then
@@ -170,7 +164,7 @@
                 taggedPhotos = [[NSMutableArray alloc] init];
             }
             
-            // Add this photo to photo array for this tag
+            // Add this photo to the photo array for this tag
             [taggedPhotos addObject:flickrPhoto];
             
             // Creates a new tag/photo array entry in the self.flickrTaggedPhotos dictionary,
