@@ -135,7 +135,7 @@
     // If adding this photo will exceeds the CACHE_SIZE_LIMIT limit,
     // then delete older photos from cache until the limit is not exceeded
     for (int loopCounter = 0;
-         ((cacheSizeBeforeAddingPhotoData + [photoData length]) > CACHE_SIZE_LIMIT);
+         ((cacheSizeBeforeAddingPhotoData + [photoData length]) > [self deviceCacheSize]);
          loopCounter++) {
         
         // Since the array has been sorted the first item has the oldest date
@@ -187,6 +187,13 @@
     // Use the DATE_KEY field to sort the array of file information (each one is an NSDictionary)
     NSSortDescriptor *key = [[NSSortDescriptor alloc] initWithKey:DATE_KEY ascending:YES]; // oldest is first
     return [filesInCache sortedArrayUsingDescriptors:@[key]];
+}
+
+// Return a cache size limit appropriate for the device
++ (NSUInteger)deviceCacheSize
+{
+    // Assignment V, Hint 3 suggests varying the cache size depending on the platform
+    return ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) ? IPAD_CACHE_SIZE_LIMIT : IPHONE_CACHE_SIZE_LIMIT;
 }
 
 @end
