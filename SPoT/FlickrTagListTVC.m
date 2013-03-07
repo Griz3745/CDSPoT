@@ -230,7 +230,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Pull a cell prototype from the pool
-    static NSString *cellReuseID = @"FlickrTag";
+    static NSString *cellReuseID = @"Flickr Tag";
     
     return [self configureCell:tableView cellReuseIdentifier:cellReuseID cellIndexPath:indexPath];
 }
