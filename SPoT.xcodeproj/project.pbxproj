@@ -27,6 +27,7 @@
 		4C71504316DAD1FC002F5654 /* FlickrPhotoListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C71504216DAD1FC002F5654 /* FlickrPhotoListTVC.m */; };
 		4C71504616DAD507002F5654 /* FlickrTagPhotoListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C71504516DAD507002F5654 /* FlickrTagPhotoListTVC.m */; };
 		4C71504916DAE031002F5654 /* FlickrRecentPhotoListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C71504816DAE031002F5654 /* FlickrRecentPhotoListTVC.m */; };
+		4C92C88116E95E7200D1971B /* CoreDataTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C92C88016E95E7200D1971B /* CoreDataTableViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -65,6 +66,8 @@
 		4C71504516DAD507002F5654 /* FlickrTagPhotoListTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlickrTagPhotoListTVC.m; sourceTree = "<group>"; };
 		4C71504716DAE031002F5654 /* FlickrRecentPhotoListTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlickrRecentPhotoListTVC.h; sourceTree = "<group>"; };
 		4C71504816DAE031002F5654 /* FlickrRecentPhotoListTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlickrRecentPhotoListTVC.m; sourceTree = "<group>"; };
+		4C92C87F16E95E7200D1971B /* CoreDataTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDataTableViewController.h; sourceTree = "<group>"; };
+		4C92C88016E95E7200D1971B /* CoreDataTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreDataTableViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,11 +139,13 @@
 		4C71501416DAAA32002F5654 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				4C92C87F16E95E7200D1971B /* CoreDataTableViewController.h */,
+				4C92C88016E95E7200D1971B /* CoreDataTableViewController.m */,
+				4C1438E316E02C9600993B3E /* UIApplication+NetworkActivity.h */,
+				4C1438E416E02C9600993B3E /* UIApplication+NetworkActivity.m */,
 				4C71503016DAAB32002F5654 /* FlickrFetcher */,
 				4C71501C16DAAA32002F5654 /* SPoTAppDelegate.h */,
 				4C71501D16DAAA32002F5654 /* SPoTAppDelegate.m */,
-				4C1438E316E02C9600993B3E /* UIApplication+NetworkActivity.h */,
-				4C1438E416E02C9600993B3E /* UIApplication+NetworkActivity.m */,
 				4C71501516DAAA32002F5654 /* SPoT-Info.plist */,
 				4C71501616DAAA32002F5654 /* InfoPlist.strings */,
 				4C71501916DAAA32002F5654 /* main.m */,
@@ -241,6 +246,7 @@
 				4C71504916DAE031002F5654 /* FlickrRecentPhotoListTVC.m in Sources */,
 				4C1438E216E0058200993B3E /* FlickrCache.m in Sources */,
 				4C1438E516E02C9600993B3E /* UIApplication+NetworkActivity.m in Sources */,
+				4C92C88116E95E7200D1971B /* CoreDataTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
