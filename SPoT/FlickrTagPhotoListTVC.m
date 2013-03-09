@@ -10,6 +10,8 @@
 //  It inherits photo list functionality from FlickrPhotoListTVC
 //  It inherits standard TVC functionality from FlickrListTVC through FlickrPhotoListTVC
 //
+//  03/07/2013 - Added support for Core Data database
+//
 
 #import "FlickrTagPhotoListTVC.h"
 #import "SPoT.h"
@@ -70,6 +72,13 @@
         [[NSSortDescriptor alloc] initWithKey:FLICKR_PHOTO_DESCRIPTION ascending:YES];
     self.flickrListPhotos =
         [self.flickrListPhotos sortedArrayUsingDescriptors:@[titleDescriptor, subTitleDescriptor]];
+}
+
+// Callback for the create & open for database document
+- (void)documentReady
+{
+    // Prepare the fetchedResultsController, now that the database is ready
+    /* ----> */ NSLog(@"Got to documentReady in FlickrTagPhotoListTVC.m: %@", self.photoDatabaseDocument);
 }
 
 #pragma mark - Table view data source

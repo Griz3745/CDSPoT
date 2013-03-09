@@ -12,8 +12,13 @@
 //  The configureCell:cellReuseIdentifier:cellIndexPath: should not be
 //  overridden by the derived class.  It provides a generic way to configure each cell
 //
+//  03/07/2013 - Added support for Core Data database
+//    NOTE: Each concrete derived class will have its own pointer to the database
+//
 
 #import "FlickrListTVC.h"
+#import "SingletonManagedDocument.h"
+#import "SPoT.h"
 
 @implementation FlickrListTVC
 
@@ -22,7 +27,11 @@
     [super viewDidLoad];
 
     // Preserve selection between presentations.
-    self.clearsSelectionOnViewWillAppear = NO; 
+    self.clearsSelectionOnViewWillAppear = NO;
+    
+    self.photoDatabaseDocument = [[SingletonManagedDocument sharedSingletonManagedDocument]
+                                  managedDocumentForName:DATABASE_NAME];
+    [self useDocument];
 }
 
 #pragma mark - Class specific methods
@@ -51,7 +60,33 @@
     
     return cell;
 }
- 
+
+- (void) useDocument
+{
+     if (![[NSFileManager defaultManager] fileExistsAtPath:[self.photoDatabaseDocument.fileURL path]]) {
+         // does not exidst on disk, so create it
+         [self.photoDatabaseDocument saveToURL:self.photoDatabaseDocument.fileURL
+                              forSaveOperation:UIDocumentSaveForCreating
+                             completionHandler:^(BOOL success) {
+                                 [self documentReady];
+                             }];
+     } else if (self.photoDatabaseDocument.documentState == UIDocumentStateClosed) {
+         // exists on disk, but we need to open it
+         [self.photoDatabaseDocument openWithCompletionHandler:^(BOOL success) {
+             [self documentReady];
+         }];
+     } else if (self.photoDatabaseDocument.documentState == UIDocumentStateNormal) {
+         [self documentReady];
+     }
+ }
+
+// Callback for the create & open for database document
+- (void)documentReady
+{
+    // Abstract method
+    // Prepare the fetchedResultsController, now that the database is ready
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section

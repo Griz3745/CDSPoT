@@ -10,6 +10,8 @@
 //
 //  It inherits standard TVC functionality from FlickrListTVC
 //
+//  03/07/2013 - Added support for Core Data database
+//
 
 #import "FlickrTagListTVC.h"
 #import "FlickrFetcher.h"
@@ -216,6 +218,13 @@
             }
         }
     }
+}
+
+// Callback for the create & open for database document
+- (void)documentReady
+{
+    // Prepare the fetchedResultsController, now that the database is ready
+    /* ----> */ NSLog(@"Got to documentReady in FlickrTagListTVC.m: %@", self.photoDatabaseDocument);
 }
 
 #pragma mark - Table view data source

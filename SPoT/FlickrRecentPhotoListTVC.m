@@ -10,6 +10,8 @@
 //  It inherits photo list functionality from FlickrPhotoListTVC
 //  It inherits standard TVC functionality from FlickrListTVC through FlickrPhotoListTVC
 //
+//  03/07/2013 - Added support for Core Data database
+//
 
 #import "FlickrRecentPhotoListTVC.h"
 #import "SPoT.h"
@@ -39,6 +41,15 @@
         // This is the only place that it gets set
         self.flickrListPhotos = recentPhotos;
     }
+}
+
+#pragma mark - Class specific methods
+
+// Callback for the create & open for database document
+- (void)documentReady
+{
+    // Prepare the fetchedResultsController, now that the database is ready
+    /* ----> */ NSLog(@"Got to documentReady in FlickrRecentPhotoListTVC.m: %@", self.photoDatabaseDocument);
 }
 
 #pragma mark - Table view data source

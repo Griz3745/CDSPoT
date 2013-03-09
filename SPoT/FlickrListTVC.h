@@ -12,6 +12,9 @@
 //  The configureCell:cellReuseIdentifier:cellIndexPath: should not be
 //  overridden by the derived class.  It provides a generic way to configure each cell
 //
+//  03/07/2013 - Added support for Core Data database
+//    NOTE: Each concrete derived class will have its own pointer to the database
+//
 
 #import <UIKit/UIKit.h>
 
@@ -26,5 +29,10 @@
 // Abstract methods which the derived classes must implement
 - (NSString *)cellTitleForRow:(NSUInteger)row;
 - (NSString *)cellSubTitleForRow:(NSUInteger)row;
+
+- (void)documentReady; // Callback for the create & open for database document
+
+// Shared SINGLE instance of the document
+@property (strong, nonatomic) UIManagedDocument *photoDatabaseDocument;
 
 @end
