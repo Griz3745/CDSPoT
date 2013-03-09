@@ -189,7 +189,7 @@
 
             // Get the image from the Cache Directory of the App OR from Flickr
             // (Network activity indicators are inside the FlickrCache class method)
-            NSData *imageData = [FlickrCache flickrImageFromPhoto:self.imageURL]; // Network Activity!
+            NSData *imageData = [FlickrCache flickrImageForPhotoURL:self.imageURL]; // Network Activity!
             
             // Set the photo in the UI
             dispatch_async(dispatch_get_main_queue(), ^{

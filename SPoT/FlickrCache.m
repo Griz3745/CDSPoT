@@ -22,7 +22,7 @@
 @implementation FlickrCache
 
 
-+ (NSData *)flickrImageFromPhoto:(NSURL *)flickrPhotoURL
++ (NSData *)flickrImageForPhotoURL:(NSURL *)flickrPhotoURL
 {
     // This method tries to find the photo URL in the App's cache directory.
     // If the photo URL is found, the photo data is fetched from the cache directory and returned.

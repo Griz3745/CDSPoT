@@ -135,6 +135,7 @@
         // Keeps track of valid tags for this photo
         NSMutableArray *tagsToProcess = [[NSMutableArray alloc] init];
         
+ // ----> Im guessing that this will go a way
         // Get the tags from the photo
         NSString *photoTags = [flickrPhoto valueForKey:FLICKR_TAGS];
         NSArray *tagStrings = [photoTags componentsSeparatedByString:@" "];

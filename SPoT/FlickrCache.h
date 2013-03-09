@@ -5,7 +5,7 @@
 //  Created by Michael Grysikiewicz on 11/24/12.
 //  Copyright (c) 2012 Michael Grysikiewicz. All rights reserved.
 //
-//  The flickrImageFromPhoto: class method, when given a Flickr photo URL,
+//  The flickrImageForPhotoURL: class method, when given a Flickr photo URL,
 //  will return the NSData for that photo.  The cache for this App will be searched first,
 //  and if not found there, the NSData for the photo will be fetched from Flickr.
 //
@@ -22,6 +22,6 @@
 //
 //  NOTE: The calling method should implement running this class method in another thread
 //
-+ (NSData *) flickrImageFromPhoto:(NSURL *)flickrPhotoURL;
++ (NSData *) flickrImageForPhotoURL:(NSURL *)flickrPhotoURL;
 
 @end

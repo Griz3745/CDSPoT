@@ -115,7 +115,7 @@
             if ([segue.identifier isEqualToString:self.segueIdentifierString]) { // set in the storyboard
                 if ([segue.destinationViewController respondsToSelector:@selector(setImageURL:)]) {
                     
-                    // Build the Flickr URL for this photo
+// ----> Format is in database now, I think                    // Build the Flickr URL for this photo
                     FlickrPhotoFormat spotPhotoFormat;
                     if (self.splitViewController) { // iPad
                         spotPhotoFormat = FlickrPhotoFormatOriginal;

@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4C0B222416EB6CBB004DA4D7 /* Photo+Flickr.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C0B222316EB6CBB004DA4D7 /* Photo+Flickr.m */; };
+		4C0B222716EB7058004DA4D7 /* Photo.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C0B222616EB7058004DA4D7 /* Photo.m */; };
+		4C0B222A16EBB7BB004DA4D7 /* Tag+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C0B222916EBB7BB004DA4D7 /* Tag+Create.m */; };
+		4C0B222D16EBB992004DA4D7 /* Tag.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C0B222C16EBB992004DA4D7 /* Tag.m */; };
 		4C1438DF16E004B700993B3E /* iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C1438DE16E004B700993B3E /* iPad.storyboard */; };
 		4C1438E216E0058200993B3E /* FlickrCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C1438E116E0058200993B3E /* FlickrCache.m */; };
 		4C1438E516E02C9600993B3E /* UIApplication+NetworkActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C1438E416E02C9600993B3E /* UIApplication+NetworkActivity.m */; };
@@ -27,12 +31,21 @@
 		4C71504316DAD1FC002F5654 /* FlickrPhotoListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C71504216DAD1FC002F5654 /* FlickrPhotoListTVC.m */; };
 		4C71504616DAD507002F5654 /* FlickrTagPhotoListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C71504516DAD507002F5654 /* FlickrTagPhotoListTVC.m */; };
 		4C71504916DAE031002F5654 /* FlickrRecentPhotoListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C71504816DAE031002F5654 /* FlickrRecentPhotoListTVC.m */; };
+		4C78C42B16EACC3D00E9FFDA /* SPoT.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4C78C42916EACC3D00E9FFDA /* SPoT.xcdatamodeld */; };
 		4C92C88116E95E7200D1971B /* CoreDataTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C92C88016E95E7200D1971B /* CoreDataTableViewController.m */; };
 		4C92C88316E9611E00D1971B /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C92C88216E9611E00D1971B /* CoreData.framework */; };
 		4C92C88616E9714D00D1971B /* SingletonManagedDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C92C88516E9714D00D1971B /* SingletonManagedDocument.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4C0B222216EB6CBB004DA4D7 /* Photo+Flickr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Photo+Flickr.h"; sourceTree = "<group>"; };
+		4C0B222316EB6CBB004DA4D7 /* Photo+Flickr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Photo+Flickr.m"; sourceTree = "<group>"; };
+		4C0B222516EB7058004DA4D7 /* Photo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Photo.h; sourceTree = "<group>"; };
+		4C0B222616EB7058004DA4D7 /* Photo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Photo.m; sourceTree = "<group>"; };
+		4C0B222816EBB7BB004DA4D7 /* Tag+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Tag+Create.h"; sourceTree = "<group>"; };
+		4C0B222916EBB7BB004DA4D7 /* Tag+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Tag+Create.m"; sourceTree = "<group>"; };
+		4C0B222B16EBB992004DA4D7 /* Tag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tag.h; sourceTree = "<group>"; };
+		4C0B222C16EBB992004DA4D7 /* Tag.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tag.m; sourceTree = "<group>"; };
 		4C1438DE16E004B700993B3E /* iPad.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = iPad.storyboard; sourceTree = "<group>"; };
 		4C1438E016E0058200993B3E /* FlickrCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlickrCache.h; sourceTree = "<group>"; };
 		4C1438E116E0058200993B3E /* FlickrCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlickrCache.m; sourceTree = "<group>"; };
@@ -68,6 +81,7 @@
 		4C71504516DAD507002F5654 /* FlickrTagPhotoListTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlickrTagPhotoListTVC.m; sourceTree = "<group>"; };
 		4C71504716DAE031002F5654 /* FlickrRecentPhotoListTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlickrRecentPhotoListTVC.h; sourceTree = "<group>"; };
 		4C71504816DAE031002F5654 /* FlickrRecentPhotoListTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlickrRecentPhotoListTVC.m; sourceTree = "<group>"; };
+		4C78C42A16EACC3D00E9FFDA /* SPoT.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SPoT.xcdatamodel; sourceTree = "<group>"; };
 		4C92C87F16E95E7200D1971B /* CoreDataTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDataTableViewController.h; sourceTree = "<group>"; };
 		4C92C88016E95E7200D1971B /* CoreDataTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreDataTableViewController.m; sourceTree = "<group>"; };
 		4C92C88216E9611E00D1971B /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -93,7 +107,6 @@
 		4C71500116DAAA32002F5654 = {
 			isa = PBXGroup;
 			children = (
-				4C92C88216E9611E00D1971B /* CoreData.framework */,
 				4C71501316DAAA32002F5654 /* SPoT */,
 				4C71500C16DAAA32002F5654 /* Frameworks */,
 				4C71500B16DAAA32002F5654 /* Products */,
@@ -114,6 +127,7 @@
 				4C71500D16DAAA32002F5654 /* UIKit.framework */,
 				4C71500F16DAAA32002F5654 /* Foundation.framework */,
 				4C71501116DAAA32002F5654 /* CoreGraphics.framework */,
+				4C92C88216E9611E00D1971B /* CoreData.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -123,6 +137,7 @@
 			children = (
 				4C71502516DAAA32002F5654 /* iPhone.storyboard */,
 				4C1438DE16E004B700993B3E /* iPad.storyboard */,
+				4C78C42916EACC3D00E9FFDA /* SPoT.xcdatamodeld */,
 				4C67059416DC2DD3002E81DB /* SPoT.h */,
 				4C71503B16DAB6E8002F5654 /* FlickrListTVC.h */,
 				4C71503C16DAB6E8002F5654 /* FlickrListTVC.m */,
@@ -140,6 +155,14 @@
 				4C1438E116E0058200993B3E /* FlickrCache.m */,
 				4C92C88416E9714D00D1971B /* SingletonManagedDocument.h */,
 				4C92C88516E9714D00D1971B /* SingletonManagedDocument.m */,
+				4C0B222516EB7058004DA4D7 /* Photo.h */,
+				4C0B222616EB7058004DA4D7 /* Photo.m */,
+				4C0B222216EB6CBB004DA4D7 /* Photo+Flickr.h */,
+				4C0B222316EB6CBB004DA4D7 /* Photo+Flickr.m */,
+				4C0B222B16EBB992004DA4D7 /* Tag.h */,
+				4C0B222C16EBB992004DA4D7 /* Tag.m */,
+				4C0B222816EBB7BB004DA4D7 /* Tag+Create.h */,
+				4C0B222916EBB7BB004DA4D7 /* Tag+Create.m */,
 				4C71501416DAAA32002F5654 /* Supporting Files */,
 			);
 			path = SPoT;
@@ -257,6 +280,11 @@
 				4C1438E516E02C9600993B3E /* UIApplication+NetworkActivity.m in Sources */,
 				4C92C88116E95E7200D1971B /* CoreDataTableViewController.m in Sources */,
 				4C92C88616E9714D00D1971B /* SingletonManagedDocument.m in Sources */,
+				4C78C42B16EACC3D00E9FFDA /* SPoT.xcdatamodeld in Sources */,
+				4C0B222416EB6CBB004DA4D7 /* Photo+Flickr.m in Sources */,
+				4C0B222716EB7058004DA4D7 /* Photo.m in Sources */,
+				4C0B222A16EBB7BB004DA4D7 /* Tag+Create.m in Sources */,
+				4C0B222D16EBB992004DA4D7 /* Tag.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -386,6 +414,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		4C78C42916EACC3D00E9FFDA /* SPoT.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				4C78C42A16EACC3D00E9FFDA /* SPoT.xcdatamodel */,
+			);
+			currentVersion = 4C78C42A16EACC3D00E9FFDA /* SPoT.xcdatamodel */;
+			path = SPoT.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 4C71500216DAAA32002F5654 /* Project object */;
 }
