@@ -16,23 +16,22 @@
 //    NOTE: Each concrete derived class will have its own pointer to the database
 //
 
-#import <UIKit/UIKit.h>
+#import "CoreDataTableViewController.h"
 
-@interface FlickrListTVC : UITableViewController
+@interface FlickrListTVC : CoreDataTableViewController
 
-// Methods called by derived classes
-- (UITableViewCell *) configureCell:(UITableView *)tableView
-                cellReuseIdentifier:(NSString *)cellReuseId
-                      cellIndexPath:(NSIndexPath *)indexPath;
+// Handle for the database
+@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 
+// -- Methods available to derived class --
+// Open database document on disk
+- (void)useDocument; 
 
-// Abstract methods which the derived classes must implement
-- (NSString *)cellTitleForRow:(NSUInteger)row;
-- (NSString *)cellSubTitleForRow:(NSUInteger)row;
+// -- Abstract methods to be implemented by the derived class --
+// Required abstract method to reset the fetchedResultsController
+- (void)documentReady:(NSManagedObjectContext *)managedObjectContext;
 
-- (void)documentReady; // Callback for the create & open for database document
-
-// Shared SINGLE instance of the document
-@property (strong, nonatomic) UIManagedDocument *photoDatabaseDocument;
+// Optional abstract method for reloading the database
+- (void)refresh;
 
 @end

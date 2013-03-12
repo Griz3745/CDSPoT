@@ -11,7 +11,7 @@
 
 @interface Photo (Flickr)
 
-// Create a database entry for the given photo in the give context
+// Create a database entry for the given photo in the give context using the given format
 + (Photo *)photoWithFlickrInfo:(NSDictionary *)photoDictionary
         inManagedObjectContext:(NSManagedObjectContext *)context
                    usingFormat:(FlickrPhotoFormat)flickrFormat;

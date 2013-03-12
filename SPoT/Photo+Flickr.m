@@ -12,7 +12,7 @@
 
 @implementation Photo (Flickr)
 
-// Create a database entry for the given photo in the give context
+// Create a database entry for the given photo in the give context using the given format
 + (Photo *)photoWithFlickrInfo:(NSDictionary *)photoDictionary
         inManagedObjectContext:(NSManagedObjectContext *)context
                    usingFormat:(FlickrPhotoFormat)flickrFormat
@@ -30,7 +30,7 @@
     NSArray *matches = [context executeFetchRequest:request error:&error];
     
     // Evaluate the query
-    if (!matches || ([ matches count] > 1)) { // More than 1 is an error
+    if (!matches || ([matches count] > 1)) { // More than 1 is an error
         // Handle error
         NSLog(@"Error fetching photo from database");
         
@@ -48,27 +48,25 @@
         photo.lastAccessTime = [NSDate date];
 
         // Get the tags from the photo
-        NSString *photoTags = [photoDictionary valueForKey:FLICKR_TAGS];
-#warning - combine with the line above
-        photoTags = [photoTags capitalizedString];
-        NSArray *tagStrings = [photoTags componentsSeparatedByString:@" "];
+        NSString *photoTagString = [[photoDictionary valueForKey:FLICKR_TAGS] description];
+        NSArray *photoDictionaryTagStrings = [[photoTagString capitalizedString] componentsSeparatedByString:@" "];
 
-        // Get the non-excluded tags
-        NSMutableArray *tagsToProcess;
-        for (NSString *tag in tagStrings) {
-            if (![[Photo excludedTags] containsObject:tag]) {
-                [tagsToProcess addObject:tag];
+        // Add the non-excluded tags to the NSSet of database tags for this photo
+        NSMutableSet *tagEntitiesForPhoto = [[NSMutableSet alloc] init];
+        
+        for (NSString *tag in photoDictionaryTagStrings) { // Iterate across the array of tag strings
+            if (![[Photo excludedTags] containsObject:tag]) { // Make sure the tag is not in the excluded list
+                Tag *dbTag = [Tag tagWithString:tag inManagedObjectContex:context]; // Factory method to create a Tag
+                if (dbTag) {
+                    [tagEntitiesForPhoto addObject:dbTag]; // Add the returned Tag to the MutableSet
+                } else {
+/* ----> */                    NSLog(@"Error in dbTag Creation");
+                }
             }
-        }
-                
-        // Get the NSSet of database tags for this photo
-        NSMutableSet *tagsForPhoto = [[NSMutableSet alloc] init];
-        for (NSString *tag in tagsToProcess) {
-            [tagsForPhoto addObject:[Tag tagWithString:tag inManagedObjectContex:context]];
         }
         
         // Add the relationship
-        photo.tags = tagsForPhoto;
+        photo.tags = tagEntitiesForPhoto; // Add the MutableSet to the Photo Entity
         
     } else { // It's in the database
         photo = [matches lastObject];
@@ -80,7 +78,7 @@
 // These tags were specifically excluded in Assignment IV, Requirement 3
 + (NSArray *)excludedTags
 {
-    return @[@"Cs193pspot", @"Portrait", @"Landscape"];
+    return @[@"Cs193Pspot", @"Portrait", @"Landscape"];
 }
 
 @end

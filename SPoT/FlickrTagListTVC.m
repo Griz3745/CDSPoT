@@ -10,73 +10,60 @@
 //
 //  It inherits standard TVC functionality from FlickrListTVC
 //
-//  03/07/2013 - Added support for Core Data database
+//  03/07/2013 - Major modification to support for Core Data database
 //
 
 #import "FlickrTagListTVC.h"
 #import "FlickrFetcher.h"
 #import "UIApplication+NetworkActivity.h"
-
-@interface FlickrTagListTVC ()
-
-// An array of photos fetched from Flickr. This is the Model for the MVC
-@property (strong, nonatomic) NSArray *flickrPhotos; // of NSDictionary
-
-// This is an NSDictionary using Flickr Tags as the dictionary Key
-// The dictionary Value is an NSArray of photos contining that Tag 
-@property (strong, nonatomic) NSDictionary *flickrTaggedPhotos;
-
-// tagList is an array of Tags that match the tags in the flickrTaggedPhotos NSDictionary
-// ** I hate having to have a seperate data structure for the tags, but the
-// tableViewController needs to access by a subscript, and I couldn't find a
-// way to access the NSDictionary by subscript.
-// I had come up with this idea, and was confirmed on StackOverflow
-@property (strong, nonatomic) NSArray *tagList; // all unique tags
-
-@end
+#import "Tag.h"
+#import "Photo+Flickr.h"
 
 @implementation FlickrTagListTVC
-
-- (NSDictionary *)flickrTaggedPhotos
-{
-    if (!_flickrTaggedPhotos) {
-        _flickrTaggedPhotos = [[NSDictionary alloc] init];
-    }
-    
-    return _flickrTaggedPhotos;
-}
-
-- (NSArray *)tagList
-{
-    if (!_tagList) {
-        _tagList = [[NSArray alloc] init];
-    }
-    
-    return _tagList;
-}
-
-// These tags were specifically excluded in Assignment IV, Requirement 3
-+ (NSArray *)excludedTags
-{
-    return @[@"cs193pspot", @"portrait", @"landscape"];
-}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    // Initilaize the TVC with photos
-    [self loadStanfordFlickrPhotos];
+/* ----> */ self.debug = YES;
     
     // <Ctrl-drag> is broken for refreshControl, so add Target/Action manually
     [self.refreshControl addTarget:self
-                            action:@selector(loadStanfordFlickrPhotos)
+                            action:@selector(refresh)
                   forControlEvents:UIControlEventValueChanged];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    if (!self.managedObjectContext) {
+        [self useDocument];
+    }
 }
 
 #pragma mark - Class specific methods
 
-- (void)loadStanfordFlickrPhotos
+// Prepare the fetchedResultsController, now that the database is ready
+- (void)documentReady:(NSManagedObjectContext *)managedObjectContext
+{
+    // Build the fetch request that will be used to populate the TVC
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Tag"];
+    request.sortDescriptors =
+    @[[NSSortDescriptor sortDescriptorWithKey:@"tagString"
+                                    ascending:YES
+                                     selector:@selector(localizedCaseInsensitiveCompare:)]];
+    request.predicate = nil; // all Tags
+    
+    // Set the fetchedResultsController (from CoreDataTableViewController)
+    self.fetchedResultsController =
+    [[NSFetchedResultsController alloc] initWithFetchRequest:request
+                                        managedObjectContext:managedObjectContext
+                                          sectionNameKeyPath:nil
+                                                   cacheName:nil];
+}
+
+// Implementation of Super Class's optional abstract method for reloading the database
+- (void)refresh
 {
     // Start the display of the activity indicator for the TVC
     [self.refreshControl beginRefreshing];
@@ -89,116 +76,66 @@
         
 // ----> */        [NSThread sleepForTimeInterval:2.0];
         
-        // Load the Model for the MVC of this Table View Controller
-        // by fetching some photos from Flickr
+        // Load the Flickr photo dictionaries
         NSArray *latestPhotos = [FlickrFetcher stanfordPhotos]; // NETWORK Activity!
 
         // Decrement Network Activity Indicator counter
         [[UIApplication sharedApplication] hideNetworkActivityIndicator];
         
-        dispatch_async(dispatch_get_main_queue(), ^{
-            // Reset data structures which manage tags
-            self.flickrTaggedPhotos = nil;
-            self.tagList = nil;
-            
-            // Only access self.flickrPhotos in the main thread
-            self.flickrPhotos = latestPhotos;
-            
-            // Build the list of photo tags
-            for (NSDictionary *flickrPhoto in self.flickrPhotos) {
-                [self addPhotoToFlickrTaggedPhotos:flickrPhoto];
+        // Set the FlickrPhotoFormat
+        FlickrPhotoFormat spotPhotoFormat;
+        if (self.splitViewController) { // iPad
+            spotPhotoFormat = FlickrPhotoFormatOriginal;
+        } else {
+            spotPhotoFormat = FlickrPhotoFormatLarge;
+        }
+        
+        // Use 'performBlock to assure that the access to the database occurs
+        // in the same thread that the database was created
+       [self.managedObjectContext performBlock:^{ // don't assume main thread
+            // Add the photos to the database. This is the Model for the App
+           for (NSDictionary *photo in latestPhotos) {
+                [Photo photoWithFlickrInfo:photo
+                    inManagedObjectContext:self.managedObjectContext
+                               usingFormat:spotPhotoFormat];
             }
-            
-            // Build the list of tags found in self.flickrTaggedPhotos NSDictionary
-            self.tagList = [self.flickrTaggedPhotos allKeys]; // Recommended by Joan-Carles
-            
-            // Alphabetically sort the tags
-            self.tagList =
-                [self.tagList sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
-            
-            // Show the results of the fetch in the TVC after the thread has completed
-            [self.tableView reloadData];
-            
-            // End the display of the activity indicator for the TVC
-            [self.refreshControl endRefreshing];
-        });
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                // End the display of the activity indicator for the TVC
+                [self.refreshControl endRefreshing];
+            });
+        }];
     });
 }
 
-// This method will search the tags in the provided flickrPhoto
-// and will update self.flickrTaggedPhotos with the tag<-->photo association  
-- (void)addPhotoToFlickrTaggedPhotos:(NSDictionary *)flickrPhoto
+- (void)debugCDDebugTagPrint
 {
-    if (flickrPhoto) {
-        // Copy to be modified within this method
-        NSMutableDictionary *mutableFlickrTaggedPhotos = [self.flickrTaggedPhotos mutableCopy];
-        // Keeps track of valid tags for this photo
-        NSMutableArray *tagsToProcess = [[NSMutableArray alloc] init];
-        
- // ----> Im guessing that this will go a way
-        // Get the tags from the photo
-        NSString *photoTags = [flickrPhoto valueForKey:FLICKR_TAGS];
-        NSArray *tagStrings = [photoTags componentsSeparatedByString:@" "];
-        
-        // Get the non-excluded tags
-        for (NSString *tag in tagStrings) {
-            if (![[FlickrTagListTVC excludedTags] containsObject:tag]) {
-                [tagsToProcess addObject:tag];
+/* ----> */
+    if (self.debug) {
+        [self.managedObjectContext performBlock:^{ // don't assume main thread
+            // Build a query to see if the tag is in the database
+            NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Tag"];
+            request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"tagString"
+                                                                      ascending:YES
+                                                                       selector:@selector(localizedCaseInsensitiveCompare:)]];
+            request.predicate = nil;
+            
+            // Execute the query
+            NSError *error;
+            NSArray *matches = [self.managedObjectContext executeFetchRequest:request error:&error];
+            for (Tag *dbTag in matches) {
+                NSLog(@"matches:%@", dbTag.tagString);
+                for (Photo *dbPhoto in dbTag.photos) {
+                    NSLog(@"    %@, %@", dbPhoto.title, dbPhoto.subtitle);
+                }
             }
-        }
-        
-        // Capitalize the tags (Can't assign to itself in fast enumeration above)
-        // Capitalize the string per Assignment IV, Requirement 3
-        for (int loopCounter = 0; loopCounter < [tagsToProcess count]; loopCounter++)
-        {
-            tagsToProcess[loopCounter] = [tagsToProcess[loopCounter] capitalizedString];
-        }
-        
-        // Add this photo to the array of photos for this tag
-        for (NSString *tag in tagsToProcess) {
-            
-            // Get the array of photos already associated with tag
-            NSMutableArray *taggedPhotos = [[mutableFlickrTaggedPhotos valueForKey:tag] mutableCopy];
-            
-            // if taggedPhotos is nil then
-            // this tag is not in the self.flickrTaggedPhotos dicitonary yet
-            if (!taggedPhotos) {
-                // This is a new tag, create a photo array for it
-                taggedPhotos = [[NSMutableArray alloc] init];
-            }
-            
-            // Add this photo to the photo array for this tag
-            [taggedPhotos addObject:flickrPhoto];
-            
-            // Creates a new tag/photo array entry in the self.flickrTaggedPhotos dictionary,
-            // Or Replaces the photo array for the tag
-            [mutableFlickrTaggedPhotos setObject:taggedPhotos forKey:tag];
-        }
-        self.flickrTaggedPhotos = mutableFlickrTaggedPhotos;
+            int i = 0; // This is here just for a spot to  put the breakpoint
+        }];
     }
+/* ----> */
 }
 
-// Implementation of method from abstract base class
-- (NSString *) cellTitleForRow:(NSUInteger)row
-{
-    // The Title for this TVC is the Tag
-    
-    // For the selected row, get the title string
-    return self.tagList[row];
-}
-
-// Implementation of method from abstract base class
-- (NSString *) cellSubTitleForRow:(NSUInteger)row
-{
-    // The Subtitle for this TVC is number of photos for the Tag
-    
-    // For the selected row, get the photos for the tag
-    NSArray *taggedPhotos = [self.flickrTaggedPhotos valueForKey:self.tagList[row]];
-    
-    // Get the subtitle string using the number of photos
-    return [NSString stringWithFormat:@"%d", [taggedPhotos count]];
-}
-
+/* ---->
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([sender isKindOfClass:[UITableViewCell class]]) {
@@ -212,7 +149,7 @@
                     
                     // Send the photos for the tag
                     [segue.destinationViewController performSelector:@selector(setFlickrListPhotos:) withObject:taggedPhotos];
-                    
+  
                     // Set the title to the tag being shown
                     [segue.destinationViewController setTitle:[self cellTitleForRow:indexPath.row]];
                 }
@@ -220,29 +157,22 @@
         }
     }
 }
-
-// Callback for the create & open for database document
-- (void)documentReady
-{
-    // Prepare the fetchedResultsController, now that the database is ready
-    /* ----> */ NSLog(@"Got to documentReady in FlickrTagListTVC.m: %@", self.photoDatabaseDocument);
-}
+----> */
 
 #pragma mark - Table view data source
 
-// Implementation of method from abstract base class
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return [self.flickrTaggedPhotos count];
-}
-
-// Implementation of method from abstract base class
+// Must still implement this method from the TableViewDataSource
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Pull a cell prototype from the pool
-    static NSString *cellReuseID = @"Flickr Tag";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FlickrTag"];
     
-    return [self configureCell:tableView cellReuseIdentifier:cellReuseID cellIndexPath:indexPath];
+    // Pull the data from the database, using the fetch setup when the fetchedResults controller was created
+    Tag* tag = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    cell.textLabel.text = tag.tagString;
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%d photos", [tag.photos count]];
+
+    return cell;
 }
 
 @end

@@ -49,7 +49,7 @@
 - (void)documentReady
 {
     // Prepare the fetchedResultsController, now that the database is ready
-    /* ----> */ NSLog(@"Got to documentReady in FlickrRecentPhotoListTVC.m: %@", self.photoDatabaseDocument);
+    // ----> */ NSLog(@"Got to documentReady in FlickrRecentPhotoListTVC.m: %@", self.photoDatabaseDocument);
 }
 
 #pragma mark - Table view data source

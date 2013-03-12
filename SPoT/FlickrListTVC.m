@@ -18,7 +18,6 @@
 
 #import "FlickrListTVC.h"
 #import "SingletonManagedDocument.h"
-#import "SPoT.h"
 
 @implementation FlickrListTVC
 
@@ -28,81 +27,57 @@
 
     // Preserve selection between presentations.
     self.clearsSelectionOnViewWillAppear = NO;
-    
-    self.photoDatabaseDocument = [[SingletonManagedDocument sharedSingletonManagedDocument]
-                                  managedDocumentForName:DATABASE_NAME];
-    [self useDocument];
+}
+
+- (void)setManagedObjectContext:(NSManagedObjectContext *)managedObjectContext
+{
+    _managedObjectContext = managedObjectContext;
+    if (managedObjectContext) {
+        // Reset the fetchedResultsController whenever a new managedObjectContext is set
+        [self documentReady:managedObjectContext];
+    } else {
+        self.fetchedResultsController = nil;
+    }
 }
 
 #pragma mark - Class specific methods
 
-- (NSString *)cellSubTitleForRow:(NSUInteger)row
+- (void)documentReady:(NSManagedObjectContext *)managedObjectContext
 {
-    // Abstract method
-    return @"Cell subtitle not set";
+    // Required abstract method to reset the fetchedResultsController
 }
-
-- (NSString *)cellTitleForRow:(NSUInteger)row
+-
+(void)refresh
 {
-    // Abstract method
-    return @"Cell title not set";
-}
-
-- (UITableViewCell *) configureCell:(UITableView *)tableView
-                cellReuseIdentifier:(NSString *)cellReuseId
-                      cellIndexPath:(NSIndexPath *)indexPath
-{
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellReuseId];
-    
-    // Configure the cell
-    cell.textLabel.text = [self cellTitleForRow:indexPath.row];
-    cell.detailTextLabel.text = [self cellSubTitleForRow:indexPath.row];
-    
-    return cell;
+    // Optional abstract method for reloading the database
 }
 
 - (void) useDocument
 {
-     if (![[NSFileManager defaultManager] fileExistsAtPath:[self.photoDatabaseDocument.fileURL path]]) {
+    UIManagedDocument *document =
+        [SingletonManagedDocument sharedSingletonManagedDocument].sharedManagedDocument;
+
+    if (![[NSFileManager defaultManager] fileExistsAtPath:[document.fileURL path]]) {
          // does not exidst on disk, so create it
-         [self.photoDatabaseDocument saveToURL:self.photoDatabaseDocument.fileURL
-                              forSaveOperation:UIDocumentSaveForCreating
-                             completionHandler:^(BOOL success) {
-                                 [self documentReady];
-                             }];
-     } else if (self.photoDatabaseDocument.documentState == UIDocumentStateClosed) {
+         [document saveToURL:document.fileURL
+            forSaveOperation:UIDocumentSaveForCreating
+           completionHandler:^(BOOL success) {
+               if (success) {
+                   self.managedObjectContext = document.managedObjectContext;
+                   // Initilaize the TVC with photos
+                   [self refresh]; // Reloads the photos
+               }
+           }];
+     } else if (document.documentState == UIDocumentStateClosed) {
          // exists on disk, but we need to open it
-         [self.photoDatabaseDocument openWithCompletionHandler:^(BOOL success) {
-             [self documentReady];
+         [document openWithCompletionHandler:^(BOOL success) {
+             if (success) {
+                 self.managedObjectContext = document.managedObjectContext;
+             }
          }];
-     } else if (self.photoDatabaseDocument.documentState == UIDocumentStateNormal) {
-         [self documentReady];
+     } else if (document.documentState == UIDocumentStateNormal) {
+         self.managedObjectContext = document.managedObjectContext;
      }
- }
-
-// Callback for the create & open for database document
-- (void)documentReady
-{
-    // Abstract method
-    // Prepare the fetchedResultsController, now that the database is ready
-}
-
-#pragma mark - Table view data source
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    // Abstract method
-    return 0;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Abstract method, MUST be overriden becuase cellReuseID is static
-    
-    // Pull a cell prototype from the pool
-    static NSString *cellReuseID = @"Cell";
-    
-    return [self configureCell:tableView cellReuseIdentifier:cellReuseID cellIndexPath:indexPath];
 }
 
 @end

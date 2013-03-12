@@ -19,7 +19,7 @@
 // Return the shared, singleton instance of SingletonManagedDocument
 +(SingletonManagedDocument *)sharedSingletonManagedDocument;
 
-// Returns an alloc'd, but NOT opened document
-- (UIManagedDocument *)managedDocumentForName:(NSString *)documentName;
+// Access to the shared managed document
+@property (readonly, strong, nonatomic) UIManagedDocument *sharedManagedDocument;
 
 @end

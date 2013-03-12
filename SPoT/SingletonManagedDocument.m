@@ -12,11 +12,12 @@
 //
 
 #import "SingletonManagedDocument.h"
+#import "SPoT.h"
 
 @interface SingletonManagedDocument()
 
 // Access to the shared managed document
-@property (strong, nonatomic) UIManagedDocument *sharedManagedDocument;
+@property (readwrite, strong, nonatomic) UIManagedDocument *sharedManagedDocument;
 
 @end
 
@@ -36,12 +37,13 @@
 }
 
 // Perform allocation of the UIManagedDocument
-- (UIManagedDocument *)managedDocumentForName:(NSString *)documentName
+- (UIManagedDocument *)sharedManagedDocument
 {
-    if (!_sharedManagedDocument) { // Build the url
+    if (!_sharedManagedDocument) {
+        // Build the url
         NSURL *url = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory
                                                              inDomains:NSUserDomainMask] lastObject];
-        url = [url URLByAppendingPathComponent:documentName];
+        url = [url URLByAppendingPathComponent:DATABASE_NAME];
         _sharedManagedDocument = [[UIManagedDocument alloc] initWithFileURL:url];
     }
     
