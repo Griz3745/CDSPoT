@@ -11,6 +11,8 @@
 		4C0B222716EB7058004DA4D7 /* Photo.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C0B222616EB7058004DA4D7 /* Photo.m */; };
 		4C0B222A16EBB7BB004DA4D7 /* Tag+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C0B222916EBB7BB004DA4D7 /* Tag+Create.m */; };
 		4C0B222D16EBB992004DA4D7 /* Tag.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C0B222C16EBB992004DA4D7 /* Tag.m */; };
+		4C10289016EFF7A800760710 /* FlickrPhotoListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C71504216DAD1FC002F5654 /* FlickrPhotoListTVC.m */; };
+		4C10289116EFFDA400760710 /* FlickrTagPhotoListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C71504516DAD507002F5654 /* FlickrTagPhotoListTVC.m */; };
 		4C1438DF16E004B700993B3E /* iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C1438DE16E004B700993B3E /* iPad.storyboard */; };
 		4C1438E216E0058200993B3E /* FlickrCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C1438E116E0058200993B3E /* FlickrCache.m */; };
 		4C1438E516E02C9600993B3E /* UIApplication+NetworkActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C1438E416E02C9600993B3E /* UIApplication+NetworkActivity.m */; };
@@ -279,6 +281,8 @@
 				4C0B222D16EBB992004DA4D7 /* Tag.m in Sources */,
 				4CDB96DA16EE1A2C00D953FB /* CoreDataTableViewController.m in Sources */,
 				4CDB96DB16EE1A3A00D953FB /* FlickrFetcher.m in Sources */,
+				4C10289016EFF7A800760710 /* FlickrPhotoListTVC.m in Sources */,
+				4C10289116EFFDA400760710 /* FlickrTagPhotoListTVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -11,13 +11,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Photo.h"
 
 @interface ImageViewController : UIViewController
 
 // This is the Model for this MVC, can be set externally
-@property (nonatomic, strong) NSURL *imageURL;
+@property (strong, nonatomic) Photo *photo;
 
 // Allow the masterViewController to manage this button
-@property (nonatomic, strong) UIBarButtonItem *splitViewBarButtonItem;
+@property (strong, nonatomic) UIBarButtonItem *splitViewBarButtonItem;
 
 @end

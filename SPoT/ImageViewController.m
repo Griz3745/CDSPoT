@@ -17,6 +17,7 @@
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView; // handle to manage the scrollView
 @property (strong, nonatomic) UIImageView *imageView; // handle to manage the imageView
+@property (nonatomic, strong) NSURL *imageURL;
 
 // Assignment IV, Requirement 6 says to turn off auto zooming if the user performs a zoom(pinch)
 @property (nonatomic, getter = allowAutoZoom) BOOL autoZoom; // borrowed 'autoZoom' from Joan-Carlos
@@ -31,6 +32,20 @@
 @implementation ImageViewController
 
 // This is the Model for this MVC, can be set externally
+- (void)setPhoto:(Photo *)photo
+{
+    _photo = photo;
+    
+    // Set the title for this view controller
+    self.title = photo.title;
+    
+    // Set the URL used by this class
+    self.imageURL = [NSURL URLWithString:photo.imageURL];
+    
+    // Update lastAccessTime in the database for this photo
+    photo.lastAccessTime = [NSDate date];
+}
+
 - (void)setImageURL:(NSURL *)imageURL
 {
     _imageURL = imageURL;

@@ -18,14 +18,6 @@
 
 @implementation FlickrRecentPhotoListTVC
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    
-    // Used in base class for the segue to this class
-    self.segueIdentifierString = @"Show Recent Photo";
-}
-
 -(void) viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];

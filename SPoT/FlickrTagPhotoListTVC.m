@@ -10,75 +10,45 @@
 //  It inherits photo list functionality from FlickrPhotoListTVC
 //  It inherits standard TVC functionality from FlickrListTVC through FlickrPhotoListTVC
 //
-//  03/07/2013 - Added support for Core Data database
+//  03/12/2013 - Added support for Core Data database
 //
 
 #import "FlickrTagPhotoListTVC.h"
-#import "SPoT.h"
-#import "FlickrFetcher.h"
+#import "Photo.h"
 
 @implementation FlickrTagPhotoListTVC
 
-- (void)viewDidLoad
+- (void)setTagForPhotos:(Tag *)tagForPhotos
 {
-    [super viewDidLoad];
-    
-    // Used in base class for the segue to this class
-    self.segueIdentifierString = @"Show Tagged Photo";
+    _tagForPhotos = tagForPhotos;
+    self.title = tagForPhotos.tagString;
+    [self setupFetchedResultsController];
 }
 
 #pragma mark - Class specific methods
 
-// Implementation of method from abstract base class, Optional
-// This class wants to save to persistent storage the list of visited photos
-- (void)savePhoto:(NSDictionary *)flickrPhoto
+- (void)setupFetchedResultsController
 {
-    // Save Recently viewed photos in NSUserDefaults
-    
-    // The NSUserDefaults for this app will be an NSArray of NSDictionaries (the photo info)
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSMutableArray *recentPhotos = [[defaults objectForKey:RECENT_PHOTOS_NSUSERDEFAULTS_KEY] mutableCopy];
-    if (!recentPhotos) recentPhotos = [[NSMutableArray alloc] init];
-    
-    // If this photo is not already in recentPhotos, then add it and synchronize NSUserDefaults
-    BOOL photoFound = !([recentPhotos indexOfObject:flickrPhoto] == NSNotFound);
-    
-    if (!photoFound) // Add photo to NSUserDefaults
-    {
-        // Limit the size of the persistent storage
-        if ([recentPhotos count] >= MAX_PERSISTENT_PHOTOS) {
-            [recentPhotos removeLastObject];
-        }
+    if (self.tagForPhotos.managedObjectContext) {
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Photo"];
+        request.sortDescriptors =
+            @[[NSSortDescriptor sortDescriptorWithKey:@"title"
+                                            ascending:YES
+                                             selector:@selector(localizedCaseInsensitiveCompare:)],
+              [NSSortDescriptor sortDescriptorWithKey:@"subtitle"
+                                            ascending:YES
+                                             selector:@selector(localizedCaseInsensitiveCompare:)]];
+        // Thank you Joan for the syntax for this predicate
+        request.predicate = [NSPredicate predicateWithFormat:@"%@ IN tags", self.tagForPhotos];  
         
-        // Add this photo to the beginning of the recentPhotos array
-        if (flickrPhoto) {
-            [recentPhotos insertObject:flickrPhoto atIndex:0];
-        }
-        
-        // Update NSUserDefaults
-        [defaults setObject:recentPhotos forKey:RECENT_PHOTOS_NSUSERDEFAULTS_KEY];
-        [defaults synchronize];
+        self.fetchedResultsController =
+            [[NSFetchedResultsController alloc] initWithFetchRequest:request
+                                                managedObjectContext:self.tagForPhotos.managedObjectContext
+                                                  sectionNameKeyPath:nil
+                                                           cacheName:nil];
+    } else {
+        self.fetchedResultsController = nil;
     }
-}
-
-// Implementation of method from abstract base class
-- (void)alphabetizePhotoList
-{
-    // Alphabetically sort the photos, using the title, and subtitle keys
-    // from the Flickr photo description
-    NSSortDescriptor *titleDescriptor =
-        [[NSSortDescriptor alloc] initWithKey:FLICKR_PHOTO_TITLE ascending:YES];
-    NSSortDescriptor *subTitleDescriptor =
-        [[NSSortDescriptor alloc] initWithKey:FLICKR_PHOTO_DESCRIPTION ascending:YES];
-    self.flickrListPhotos =
-        [self.flickrListPhotos sortedArrayUsingDescriptors:@[titleDescriptor, subTitleDescriptor]];
-}
-
-// Callback for the create & open for database document
-- (void)documentReady
-{
-    // Prepare the fetchedResultsController, now that the database is ready
-    // ----> */ NSLog(@"Got to documentReady in FlickrTagPhotoListTVC.m: %@", self.photoDatabaseDocument);
 }
 
 #pragma mark - Table view data source
@@ -87,9 +57,16 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Pull a cell prototype from the pool
-    static NSString *cellReuseID = @"Flickr Tag Photo";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Flickr Tag Photo"];
     
-    return [self configureCell:tableView cellReuseIdentifier:cellReuseID cellIndexPath:indexPath];
+    // Fetch a photo from the database
+    Photo *photo = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    
+    // Flesh out the cell based on the database information
+    cell.textLabel.text = photo.title;
+    cell.detailTextLabel.text = photo.subtitle;
+    
+    return cell;
 }
 
 @end

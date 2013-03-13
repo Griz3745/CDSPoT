@@ -12,9 +12,12 @@
 //
 //  It inherits standard TVC functionality from FlickrListTVC
 //
+//  03/12/2013 - Major modification to support use with Core Data
+//
 
 #import "FlickrPhotoListTVC.h"
 #import "FlickrFetcher.h"
+#import "Photo.h"
 
 @interface FlickrPhotoListTVC() <UISplitViewControllerDelegate>
 
@@ -29,55 +32,7 @@
     self.splitViewController.delegate = self;
 }
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    
-    // Alphabetize photo list
-    // calling an abstract method
-    [self alphabetizePhotoList];
-}
-
 #pragma mark - Class specific methods
-
-// Save the photo description, not the image
-- (void)savePhoto:(NSDictionary *)flickrPhoto
-{
-    // Abstract method
-    // This method is NOT required
-    // Only for derived classes which need to perform the save operation
-    // to persistent storage
-}
-
-- (void)alphabetizePhotoList
-{
-    // Abstract
-    // This method is NOT required
-    // Only for derived classes which want an alphabetized list
-}
-
-- (void)setFlickrListPhotos:(NSArray *)flickrListPhotos
-{
-    // Model for this MVC, can be set externally
-    _flickrListPhotos = flickrListPhotos;
-    
-    // Since the Model has changed, a whole scale reload of the table is necessary
-    [self.tableView reloadData];
-}
-
-// Implementation of method from abstract base class
-- (NSString *) cellTitleForRow:(NSUInteger)row
-{
-    // For the selected row, get the photo's title string
-    return [[self.flickrListPhotos objectAtIndex:row] valueForKey:FLICKR_PHOTO_TITLE];
-}
-
-// Implementation of method from abstract base class
-- (NSString *) cellSubTitleForRow:(NSUInteger)row
-{
-    // For the selected row, get the photo's subtitle string
-    return [[self.flickrListPhotos objectAtIndex:row] valueForKeyPath:FLICKR_PHOTO_DESCRIPTION];
-}
 
 // Verifies that the returned class implements the getter/setter: splitViewBarButtonItem
 - (id)splitViewDetailWithBarButtonItem
@@ -107,45 +62,31 @@
     }
 }
 
+#pragma mark - Segue
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
+    NSIndexPath *indexPath = nil;
+    
     if ([sender isKindOfClass:[UITableViewCell class]]) {
-        NSIndexPath *indexPath = [self.tableView indexPathForCell:sender]; // the selected cell
-        if (indexPath) {
-            if ([segue.identifier isEqualToString:self.segueIdentifierString]) { // set in the storyboard
-                if ([segue.destinationViewController respondsToSelector:@selector(setImageURL:)]) {
-                    
-// ----> Format is in database now, I think                    // Build the Flickr URL for this photo
-                    FlickrPhotoFormat spotPhotoFormat;
-                    if (self.splitViewController) { // iPad
-                        spotPhotoFormat = FlickrPhotoFormatOriginal;
-                    } else {
-                        spotPhotoFormat = FlickrPhotoFormatLarge;
-                    }
-                    NSURL *spotPhotoURL = [FlickrFetcher urlForPhoto:self.flickrListPhotos[indexPath.row] format:spotPhotoFormat];
-                    
-                    // Save the photo description, not the image
-                    [self savePhoto:self.flickrListPhotos[indexPath.row]];
-                    
-                    // Set the photo in the destination class
-                    [segue.destinationViewController performSelector:@selector(setImageURL:) withObject:spotPhotoURL];
-                    
-                    // Set the title of the destination view controller
-                    [segue.destinationViewController setTitle:[self cellTitleForRow:indexPath.row]];
-                    
-                    // Move the splitViewBarButtonItem when the image is switched
-                    [self transferSplitViewBarButtonItemToViewController:segue.destinationViewController];
-                }
+        indexPath = [self.tableView indexPathForCell:sender]; // the selected cell
+    }
+    
+    if (indexPath) {
+        if ([segue.identifier isEqualToString:@"setPhoto:"]) { // set in the storyboard
+            // Get the selected photo
+            Photo *photo = [self.fetchedResultsController objectAtIndexPath:indexPath];
+            
+            if ([segue.destinationViewController respondsToSelector:@selector(setPhoto:)]) {
+                // Set the photo in the destination class
+                [segue.destinationViewController performSelector:@selector(setPhoto:)
+                                                      withObject:photo];
+                
+                 // Move the splitViewBarButtonItem when the image is switched
+                [self transferSplitViewBarButtonItemToViewController:segue.destinationViewController];
             }
         }
     }
-}
-
-#pragma mark - Table view data source
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return [self.flickrListPhotos count];
 }
 
 #pragma mark - <SplitViewControllerDelegate>

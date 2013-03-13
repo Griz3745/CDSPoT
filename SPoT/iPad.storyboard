@@ -50,7 +50,7 @@
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
                                 <connections>
-                                    <segue destination="qVf-95-Wew" kind="replace" identifier="Show Recent Photo" splitViewControllerTargetIndex="1" id="HCs-7R-X0f"/>
+                                    <segue destination="qVf-95-Wew" kind="replace" identifier="setPhoto:" splitViewControllerTargetIndex="1" id="HCs-7R-X0f"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -98,7 +98,7 @@
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
                                 <connections>
-                                    <segue destination="baW-Ah-tQR" kind="push" identifier="Tag Photo List" id="7iQ-j0-0yV"/>
+                                    <segue destination="baW-Ah-tQR" kind="push" identifier="setTagForPhotos:" id="7iQ-j0-0yV"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -149,7 +149,7 @@
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
                                 <connections>
-                                    <segue destination="qVf-95-Wew" kind="replace" identifier="Show Tagged Photo" splitViewControllerTargetIndex="1" id="p9F-8Z-0aP"/>
+                                    <segue destination="qVf-95-Wew" kind="replace" identifier="setPhoto:" splitViewControllerTargetIndex="1" id="p9F-8Z-0aP"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -270,38 +270,6 @@
             <point key="canvasLocation" x="727" y="861"/>
         </scene>
     </scenes>
-    <classes>
-        <class className="FlickrListTVC" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FlickrListTVC.h"/>
-        </class>
-        <class className="FlickrPhotoListTVC" superclassName="FlickrListTVC">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FlickrPhotoListTVC.h"/>
-        </class>
-        <class className="FlickrRecentPhotoListTVC" superclassName="FlickrPhotoListTVC">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FlickrRecentPhotoListTVC.h"/>
-        </class>
-        <class className="FlickrTagListTVC" superclassName="FlickrListTVC">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FlickrTagListTVC.h"/>
-        </class>
-        <class className="FlickrTagPhotoListTVC" superclassName="FlickrPhotoListTVC">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FlickrTagPhotoListTVC.h"/>
-        </class>
-        <class className="ImageViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ImageViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="activitySpinner" candidateClass="UIActivityIndicatorView"/>
-                <relationship kind="outlet" name="scrollView" candidateClass="UIScrollView"/>
-                <relationship kind="outlet" name="titleBarButtonItem" candidateClass="UIBarButtonItem"/>
-                <relationship kind="outlet" name="toolBar" candidateClass="UIToolbar"/>
-            </relationships>
-        </class>
-        <class className="NSLayoutConstraint" superclassName="NSObject">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
-        </class>
-        <class className="UIRefreshControl" superclassName="UIControl">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/UIRefreshControl.h"/>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>

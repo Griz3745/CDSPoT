@@ -34,7 +34,7 @@
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
                                 <connections>
-                                    <segue destination="2" kind="push" identifier="Show Recent Photo" id="o8K-Rj-U2a"/>
+                                    <segue destination="2" kind="push" identifier="setPhoto:" id="o8K-Rj-U2a"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -79,7 +79,7 @@
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
                                 <connections>
-                                    <segue destination="bbU-8h-vjY" kind="push" identifier="Tag Photo List" id="8aO-bf-YpX"/>
+                                    <segue destination="bbU-8h-vjY" kind="push" identifier="setTagForPhotos:" id="8aO-bf-YpX"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -127,7 +127,7 @@
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
                                 <connections>
-                                    <segue destination="2" kind="push" identifier="Show Tagged Photo" id="VU7-VG-AJf"/>
+                                    <segue destination="2" kind="push" identifier="setPhoto:" id="VU7-VG-AJf"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>

@@ -12,7 +12,11 @@
 //
 
 #import "FlickrPhotoListTVC.h"
+#import "Tag.h"
 
 @interface FlickrTagPhotoListTVC : FlickrPhotoListTVC
+
+// Model for this MVC, can be set externally
+@property (strong, nonatomic) Tag *tagForPhotos;
 
 @end

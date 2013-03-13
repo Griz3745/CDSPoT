@@ -24,7 +24,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-/* ----> */ self.debug = YES;
     
     // <Ctrl-drag> is broken for refreshControl, so add Target/Action manually
     [self.refreshControl addTarget:self
@@ -129,35 +128,35 @@
                     NSLog(@"    %@, %@", dbPhoto.title, dbPhoto.subtitle);
                 }
             }
-            int i = 0; // This is here just for a spot to  put the breakpoint
+            int i;
+            i = 0; // This is here just for a spot to  put the breakpoint
         }];
     }
 /* ----> */
 }
 
-/* ---->
+#pragma mark - Segue
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
+    NSIndexPath *indexPath = nil;
+    
     if ([sender isKindOfClass:[UITableViewCell class]]) {
-        NSIndexPath *indexPath = [self.tableView indexPathForCell:sender]; // the selected cell
-        if (indexPath) {
-            if ([segue.identifier isEqualToString:@"Tag Photo List"]) { // set in storyboard
-                if ([segue.destinationViewController respondsToSelector:@selector(setFlickrListPhotos:)]) {
-                    
-                    // Get the array of photos associated with the tag
-                    NSArray *taggedPhotos = [self.flickrTaggedPhotos valueForKey:self.tagList[indexPath.row]];
-                    
-                    // Send the photos for the tag
-                    [segue.destinationViewController performSelector:@selector(setFlickrListPhotos:) withObject:taggedPhotos];
-  
-                    // Set the title to the tag being shown
-                    [segue.destinationViewController setTitle:[self cellTitleForRow:indexPath.row]];
-                }
+        indexPath = [self.tableView indexPathForCell:sender]; // the selected cell
+    }
+    
+    if (indexPath) {
+        if ([segue.identifier isEqualToString:@"setTagForPhotos:"]) { // set in storyboard
+            // Get the selected tag
+            Tag *tag = [self.fetchedResultsController objectAtIndexPath:indexPath];
+            
+            if ([segue.destinationViewController respondsToSelector:@selector(setTagForPhotos:)]) {
+                // Set the Tag in the destination view controller
+                [segue.destinationViewController performSelector:@selector(setTagForPhotos:) withObject:tag];
             }
         }
     }
 }
-----> */
 
 #pragma mark - Table view data source
 
