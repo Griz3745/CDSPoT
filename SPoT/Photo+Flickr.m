@@ -44,6 +44,7 @@
         photo.subtitle = [[photoDictionary valueForKeyPath:FLICKR_PHOTO_DESCRIPTION] description];
         photo.imageURL = [[FlickrFetcher urlForPhoto:photoDictionary format:flickrFormat] absoluteString];
         photo.uniqueID = [photoDictionary[FLICKR_PHOTO_ID] description];
+        photo.thumbnailURL = [[FlickrFetcher urlForPhoto:photoDictionary format:FlickrPhotoFormatSquare] absoluteString];
         photo.thumbnailImage = nil;
         photo.lastAccessTime = nil;
 

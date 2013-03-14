@@ -2,7 +2,7 @@
 //  Photo.m
 //  SPoT
 //
-//  Created by Michael Grysikiewicz on 3/9/13.
+//  Created by Michael Grysikiewicz on 3/14/13.
 //  Copyright (c) 2013 Michael Grysikiewicz. All rights reserved.
 //
 
@@ -18,6 +18,7 @@
 @dynamic thumbnailImage;
 @dynamic title;
 @dynamic uniqueID;
+@dynamic thumbnailURL;
 @dynamic tags;
 
 @end

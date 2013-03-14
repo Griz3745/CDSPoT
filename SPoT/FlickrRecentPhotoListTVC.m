@@ -63,7 +63,8 @@
     // Flesh out the cell based on the database information
     cell.textLabel.text = photo.title;
     cell.detailTextLabel.text = photo.subtitle;
-    
+    cell.imageView.image = [UIImage imageWithData:photo.thumbnailImage];
+
     return cell;
 }
 

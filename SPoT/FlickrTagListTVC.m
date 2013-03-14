@@ -38,6 +38,14 @@
     if (!self.managedObjectContext) {
         [self useDocument]; // Super class method to open the database file
     }
+    
+    // If the database file was created, but not properly populated, try again to populate
+    // This addresses Assignment 6, Hint 11
+    if (self.fetchedResultsController.fetchedObjects) {
+        if (![self.fetchedResultsController.fetchedObjects count]) {
+            [self refresh];
+        }
+    }
 }
 
 #pragma mark - Class specific methods
