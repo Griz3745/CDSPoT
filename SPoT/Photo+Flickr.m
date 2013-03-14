@@ -45,7 +45,7 @@
         photo.imageURL = [[FlickrFetcher urlForPhoto:photoDictionary format:flickrFormat] absoluteString];
         photo.uniqueID = [photoDictionary[FLICKR_PHOTO_ID] description];
         photo.thumbnailImage = nil;
-        photo.lastAccessTime = [NSDate date];
+        photo.lastAccessTime = nil;
 
         // Get the tags from the photo
         NSString *photoTagString = [[photoDictionary valueForKey:FLICKR_TAGS] description];

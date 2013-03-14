@@ -36,7 +36,7 @@
     [super viewWillAppear:animated];
     
     if (!self.managedObjectContext) {
-        [self useDocument];
+        [self useDocument]; // Super class method to open the database file
     }
 }
 

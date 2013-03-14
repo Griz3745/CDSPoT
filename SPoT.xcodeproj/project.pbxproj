@@ -29,6 +29,7 @@
 		4C71503716DAAC44002F5654 /* ImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C71503616DAAC44002F5654 /* ImageViewController.m */; };
 		4C71503D16DAB6E8002F5654 /* FlickrListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C71503C16DAB6E8002F5654 /* FlickrListTVC.m */; };
 		4C71504016DAC837002F5654 /* FlickrTagListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C71503F16DAC837002F5654 /* FlickrTagListTVC.m */; };
+		4C7617FF16F02E08008FD742 /* FlickrRecentPhotoListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C71504816DAE031002F5654 /* FlickrRecentPhotoListTVC.m */; };
 		4C78C42B16EACC3D00E9FFDA /* SPoT.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4C78C42916EACC3D00E9FFDA /* SPoT.xcdatamodeld */; };
 		4C92C88316E9611E00D1971B /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C92C88216E9611E00D1971B /* CoreData.framework */; };
 		4C92C88616E9714D00D1971B /* SingletonManagedDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C92C88516E9714D00D1971B /* SingletonManagedDocument.m */; };
@@ -283,6 +284,7 @@
 				4CDB96DB16EE1A3A00D953FB /* FlickrFetcher.m in Sources */,
 				4C10289016EFF7A800760710 /* FlickrPhotoListTVC.m in Sources */,
 				4C10289116EFFDA400760710 /* FlickrTagPhotoListTVC.m in Sources */,
+				4C7617FF16F02E08008FD742 /* FlickrRecentPhotoListTVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

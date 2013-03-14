@@ -32,6 +32,33 @@
     self.splitViewController.delegate = self;
 }
 
+#pragma mark - Segue
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    NSIndexPath *indexPath = nil;
+    
+    if ([sender isKindOfClass:[UITableViewCell class]]) {
+        indexPath = [self.tableView indexPathForCell:sender]; // the selected cell
+    }
+    
+    if (indexPath) {
+        if ([segue.identifier isEqualToString:@"setPhoto:"]) { // set in the storyboard
+            // Get the selected photo
+            Photo *photo = [self.fetchedResultsController objectAtIndexPath:indexPath];
+            
+            if ([segue.destinationViewController respondsToSelector:@selector(setPhoto:)]) {
+                // Set the photo in the destination class
+                [segue.destinationViewController performSelector:@selector(setPhoto:)
+                                                      withObject:photo];
+                
+                 // Move the splitViewBarButtonItem when the image is switched
+                [self transferSplitViewBarButtonItemToViewController:segue.destinationViewController];
+            }
+        }
+    }
+}
+
 #pragma mark - Class specific methods
 
 // Verifies that the returned class implements the getter/setter: splitViewBarButtonItem
@@ -59,33 +86,6 @@
     // Put the splitViewBarButtonItem on the new destinationViewController
     if (splitViewBarButtonItem) {
         [destinationViewController performSelector:@selector(setSplitViewBarButtonItem:) withObject:splitViewBarButtonItem];
-    }
-}
-
-#pragma mark - Segue
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    NSIndexPath *indexPath = nil;
-    
-    if ([sender isKindOfClass:[UITableViewCell class]]) {
-        indexPath = [self.tableView indexPathForCell:sender]; // the selected cell
-    }
-    
-    if (indexPath) {
-        if ([segue.identifier isEqualToString:@"setPhoto:"]) { // set in the storyboard
-            // Get the selected photo
-            Photo *photo = [self.fetchedResultsController objectAtIndexPath:indexPath];
-            
-            if ([segue.destinationViewController respondsToSelector:@selector(setPhoto:)]) {
-                // Set the photo in the destination class
-                [segue.destinationViewController performSelector:@selector(setPhoto:)
-                                                      withObject:photo];
-                
-                 // Move the splitViewBarButtonItem when the image is switched
-                [self transferSplitViewBarButtonItemToViewController:segue.destinationViewController];
-            }
-        }
     }
 }
 

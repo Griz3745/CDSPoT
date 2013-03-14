@@ -15,43 +15,56 @@
 
 #import "FlickrRecentPhotoListTVC.h"
 #import "SPoT.h"
+#import "Photo.h"
 
 @implementation FlickrRecentPhotoListTVC
 
 -(void) viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
- 
-    // Get the list of photos from persistent storage
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSArray *recentPhotos = [defaults objectForKey:RECENT_PHOTOS_NSUSERDEFAULTS_KEY];
     
-    if (recentPhotos)
-    {
-        // Assign the persistent photos to this TVC
-        // This is the Model for this MVC
-        // This is the only place that it gets set
-        self.flickrListPhotos = recentPhotos;
+    if (!self.managedObjectContext) {
+        [self useDocument]; // Super class method to open the database file
     }
 }
 
 #pragma mark - Class specific methods
 
 // Callback for the create & open for database document
-- (void)documentReady
+- (void)documentReady:(NSManagedObjectContext *)managedObjectContext
 {
-    // Prepare the fetchedResultsController, now that the database is ready
-    // ----> */ NSLog(@"Got to documentReady in FlickrRecentPhotoListTVC.m: %@", self.photoDatabaseDocument);
+    // Build the fetch request that will be used to populate the TVC
+    
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Photo"];
+    request.sortDescriptors =
+        @[[NSSortDescriptor sortDescriptorWithKey:@"lastAccessTime" ascending:NO]];
+    [request setFetchLimit:MAX_RECENT_PHOTOS];
+    request.predicate = [NSPredicate predicateWithFormat:@"lastAccessTime != nil"];
+    
+    // Set the fetchedResultsController (from CoreDataTableViewController)
+    self.fetchedResultsController =
+        [[NSFetchedResultsController alloc] initWithFetchRequest:request
+                                            managedObjectContext:managedObjectContext
+                                              sectionNameKeyPath:nil
+                                                       cacheName:nil];
 }
 
 #pragma mark - Table view data source
 
+// Implementation of method from abstract base class
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Pull a cell prototype from the pool
-    static NSString *cellReuseID = @"Flickr Recent Photo";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Flickr Recent Photo"];
     
-    return [self configureCell:tableView cellReuseIdentifier:cellReuseID cellIndexPath:indexPath];
+    // Fetch a photo from the database
+    Photo *photo = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    
+    // Flesh out the cell based on the database information
+    cell.textLabel.text = photo.title;
+    cell.detailTextLabel.text = photo.subtitle;
+    
+    return cell;
 }
 
 @end
