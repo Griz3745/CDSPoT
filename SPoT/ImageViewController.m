@@ -34,16 +34,21 @@
 // This is the Model for this MVC, can be set externally
 - (void)setPhoto:(Photo *)photo
 {
-    _photo = photo;
-    
-    // Set the title for this view controller
-    self.title = photo.title;
-    
-    // Set the URL used by this class
-    self.imageURL = [NSURL URLWithString:photo.imageURL];
-    
-    // Update lastAccessTime in the database for this photo
-    photo.lastAccessTime = [NSDate date];
+    if ([self.photo.isUserDeleted boolValue]) {
+        // Handling photo deletion here works for iPad
+        [self showDeletedPhoto];
+    } else {
+        _photo = photo;
+        
+        // Set the title for this view controller
+        self.title = photo.title;
+        
+        // Set the URL used by this class
+        self.imageURL = [NSURL URLWithString:photo.imageURL];
+        
+        // Update lastAccessTime in the database for this photo
+        photo.lastAccessTime = [NSDate date];
+    }
 }
 
 - (void)setImageURL:(NSURL *)imageURL
@@ -106,6 +111,14 @@
     [self resetImage];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    // Handling deleted photos in viewWillAppear only works for iPhone
+    if ([self.photo.isUserDeleted boolValue]) {
+        [self showDeletedPhoto];
+    }
+}
+
 - (void)viewDidLayoutSubviews // from AutoLayout
 {
     [super viewDidLayoutSubviews];
@@ -117,6 +130,11 @@
 }
 
 #pragma mark - Class specific methods
+- (void)showDeletedPhoto
+{
+    self.title = @"Photo Deleted";
+    self.imageView.image = nil;
+}
 
 // Create a new 'back' button for the image title in self.toolBar
 - (void)resetToolBarBackButton:(UIBarButtonItem *)splitViewBarButtonItem

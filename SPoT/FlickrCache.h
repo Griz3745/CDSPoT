@@ -22,6 +22,9 @@
 //
 //  NOTE: The calling method should implement running this class method in another thread
 //
-+ (NSData *) flickrImageForPhotoURL:(NSURL *)flickrPhotoURL;
++ (NSData *)flickrImageForPhotoURL:(NSURL *)flickrPhotoURL;
+
+// Remove the photo from cache when it is deleted by the user
++ (void)removePhotoURL:(NSURL *)flickrPhotoURL;
 
 @end

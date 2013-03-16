@@ -19,6 +19,7 @@
 #import "FlickrFetcher.h"
 #import "Photo.h"
 #import "Tag.h"
+#import "FlickrCache.h"
 
 @interface FlickrPhotoListTVC() <UISplitViewControllerDelegate>
 
@@ -144,6 +145,20 @@
         for (Tag* tag in photo.tags) {
             tag.undeletedPhotoCount = @([tag.undeletedPhotoCount integerValue] - 1);
         }
+        
+        id imageViewController = [self.splitViewController.viewControllers lastObject];
+        
+        if ([imageViewController respondsToSelector:@selector(setPhoto:)] &&
+            [imageViewController respondsToSelector:@selector(photo)]) {
+            
+            if ([photo isEqual:[imageViewController performSelector:@selector(photo) withObject:photo]]) {
+                // This is the same photo, but now it is marked for deletion
+                [imageViewController performSelector:@selector(setPhoto:) withObject:photo];
+            }
+        }
+        
+        // Remove the photo from cache
+        [FlickrCache removePhotoURL:[NSURL URLWithString:photo.imageURL]];
     }
 }
 

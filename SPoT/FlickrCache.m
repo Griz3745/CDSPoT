@@ -65,6 +65,25 @@
     return photoData;
 }
 
+// Remove the photo from cache when it is deleted by the user
++ (void)removePhotoURL:(NSURL *)flickrPhotoURL
+{
+    // Setup the Cache directory
+    NSURL *cacheDirectoryURL = [self createCacheDirectory];
+    
+    // Create the name for the cached photo
+    NSString *uniquePhotoID = [flickrPhotoURL lastPathComponent];
+    NSURL *cachePhotoURL = [cacheDirectoryURL URLByAppendingPathComponent:uniquePhotoID];
+    
+    // Delete flickrPhotoURL from the App's cache
+    if ([cachePhotoURL checkResourceIsReachableAndReturnError:nil]) {
+        if (![[[NSFileManager alloc] init] removeItemAtURL:cachePhotoURL error:nil])
+        {
+            NSLog(@"Failed to remove----> %@", cachePhotoURL);
+        }
+    }
+}
+
 // Create and return the Cache directory URL from the Apps Sandbox
 + (NSURL *)createCacheDirectory
 {
