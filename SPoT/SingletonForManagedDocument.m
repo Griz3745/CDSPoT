@@ -11,29 +11,28 @@
 //  find a way to make the completion handler work in a nice way with the calling methods
 //
 
-#import "SingletonManagedDocument.h"
+#import "SingletonForManagedDocument.h"
 #import "SPoT.h"
 
-@interface SingletonManagedDocument()
+@interface SingletonForManagedDocument()
 
 // Access to the shared managed document
 @property (readwrite, strong, nonatomic) UIManagedDocument *sharedManagedDocument;
 
 @end
 
-@implementation SingletonManagedDocument
+@implementation SingletonForManagedDocument
 
-+ (SingletonManagedDocument *)sharedSingletonManagedDocument
++ (SingletonForManagedDocument *)sharedSingletonInstance
 {
-    static SingletonManagedDocument *sharedSingletonManagedDocument;
+    static SingletonForManagedDocument *sharedSingletonInstance;
     
-    @synchronized (self) {
-        if (!sharedSingletonManagedDocument) {
-            sharedSingletonManagedDocument = [[SingletonManagedDocument alloc] init];
-        }
-    }
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedSingletonInstance = [[SingletonForManagedDocument alloc] init];
+    });
     
-    return  sharedSingletonManagedDocument;
+    return  sharedSingletonInstance;
 }
 
 // Perform allocation of the UIManagedDocument

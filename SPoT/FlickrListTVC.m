@@ -17,7 +17,7 @@
 //
 
 #import "FlickrListTVC.h"
-#import "SingletonManagedDocument.h"
+#import "SingletonForManagedDocument.h"
 
 @implementation FlickrListTVC
 
@@ -55,7 +55,7 @@
 - (void) useDocument
 {
     UIManagedDocument *document =
-        [SingletonManagedDocument sharedSingletonManagedDocument].sharedManagedDocument;
+        [SingletonForManagedDocument sharedSingletonInstance].sharedManagedDocument;
 
     if (![[NSFileManager defaultManager] fileExistsAtPath:[document.fileURL path]]) {
          // does not exidst on disk, so create it

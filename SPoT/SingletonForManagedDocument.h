@@ -14,10 +14,10 @@
 #import <Foundation/Foundation.h>
 
 
-@interface SingletonManagedDocument : NSObject
+@interface SingletonForManagedDocument : NSObject
 
 // Return the shared, singleton instance of SingletonManagedDocument
-+(SingletonManagedDocument *)sharedSingletonManagedDocument;
++(SingletonForManagedDocument *)sharedSingletonInstance;
 
 // Access to the shared managed document
 @property (readonly, strong, nonatomic) UIManagedDocument *sharedManagedDocument;

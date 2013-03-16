@@ -231,6 +231,41 @@
             <point key="canvasLocation" x="727" y="613"/>
         </scene>
     </scenes>
+    <classes>
+        <class className="CoreDataTableViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/CoreDataTableViewController.h"/>
+        </class>
+        <class className="FlickrListTVC" superclassName="CoreDataTableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FlickrListTVC.h"/>
+        </class>
+        <class className="FlickrPhotoListTVC" superclassName="FlickrListTVC">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FlickrPhotoListTVC.h"/>
+        </class>
+        <class className="FlickrRecentPhotoListTVC" superclassName="FlickrPhotoListTVC">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FlickrRecentPhotoListTVC.h"/>
+        </class>
+        <class className="FlickrTagListTVC" superclassName="FlickrListTVC">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FlickrTagListTVC.h"/>
+        </class>
+        <class className="FlickrTagPhotoListTVC" superclassName="FlickrPhotoListTVC">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FlickrTagPhotoListTVC.h"/>
+        </class>
+        <class className="ImageViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ImageViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="activitySpinner" candidateClass="UIActivityIndicatorView"/>
+                <relationship kind="outlet" name="scrollView" candidateClass="UIScrollView"/>
+                <relationship kind="outlet" name="titleBarButtonItem" candidateClass="UIBarButtonItem"/>
+                <relationship kind="outlet" name="toolBar" candidateClass="UIToolbar"/>
+            </relationships>
+        </class>
+        <class className="NSLayoutConstraint" superclassName="NSObject">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
+        </class>
+        <class className="UIRefreshControl" superclassName="UIControl">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/UIRefreshControl.h"/>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
