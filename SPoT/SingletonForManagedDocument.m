@@ -25,14 +25,14 @@
 
 + (SingletonForManagedDocument *)sharedSingletonInstance
 {
-    static SingletonForManagedDocument *sharedSingletonInstance;
+    static SingletonForManagedDocument *sharedInstance;
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        sharedSingletonInstance = [[SingletonForManagedDocument alloc] init];
+        sharedInstance = [[SingletonForManagedDocument alloc] init];
     });
     
-    return  sharedSingletonInstance;
+    return  sharedInstance;
 }
 
 // Perform allocation of the UIManagedDocument
