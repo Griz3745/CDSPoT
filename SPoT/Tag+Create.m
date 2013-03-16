@@ -17,6 +17,9 @@
     Tag *tag = nil;
 
     if (tagString.length) {
+        // Make the tagstring capitalized for aesthetics
+        tagString = [tagString capitalizedString];
+        
         // Build a query to see if the tag is in the database
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Tag"];
         request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"tagString"
@@ -36,6 +39,7 @@
         } else if (![matches count]) { // It's not in the database, so add it
             tag = [NSEntityDescription insertNewObjectForEntityForName:@"Tag" inManagedObjectContext:context];
             tag.tagString = tagString;
+            tag.section = [tag.tagString substringToIndex:1];
             
         } else { // Return the tag that is in the database
             tag = [matches lastObject];

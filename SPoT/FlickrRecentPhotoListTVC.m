@@ -39,7 +39,7 @@
     request.sortDescriptors =
         @[[NSSortDescriptor sortDescriptorWithKey:@"lastAccessTime" ascending:NO]];
     [request setFetchLimit:MAX_RECENT_PHOTOS];
-    request.predicate = [NSPredicate predicateWithFormat:@"lastAccessTime != nil"];
+    request.predicate = [NSPredicate predicateWithFormat:@"(lastAccessTime != nil) AND (isUserDeleted = NO)"];
     
     // Set the fetchedResultsController (from CoreDataTableViewController)
     self.fetchedResultsController =

@@ -2,7 +2,7 @@
 //  Tag.h
 //  SPoT
 //
-//  Created by Michael Grysikiewicz on 3/9/13.
+//  Created by Michael Grysikiewicz on 3/16/13.
 //  Copyright (c) 2013 Michael Grysikiewicz. All rights reserved.
 //
 
@@ -13,7 +13,9 @@
 
 @interface Tag : NSManagedObject
 
+@property (nonatomic, retain) NSString * section;
 @property (nonatomic, retain) NSString * tagString;
+@property (nonatomic, retain) NSNumber * undeletedPhotoCount;
 @property (nonatomic, retain) NSSet *photos;
 @end
 

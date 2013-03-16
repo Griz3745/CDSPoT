@@ -47,10 +47,12 @@
         photo.thumbnailURL = [[FlickrFetcher urlForPhoto:photoDictionary format:FlickrPhotoFormatSquare] absoluteString];
         photo.thumbnailImage = nil;
         photo.lastAccessTime = nil;
+        photo.section = [[photo.title substringToIndex:1] capitalizedString];
+        photo.isUserDeleted = @(NO);
 
         // Get the tags from the photo
         NSString *photoTagString = [[photoDictionary valueForKey:FLICKR_TAGS] description];
-        NSArray *photoDictionaryTagStrings = [[photoTagString capitalizedString] componentsSeparatedByString:@" "];
+        NSArray *photoDictionaryTagStrings = [photoTagString componentsSeparatedByString:@" "];
 
         // Add the non-excluded tags to the NSSet of database tags for this photo
         NSMutableSet *tagEntitiesForPhoto = [[NSMutableSet alloc] init];
@@ -60,6 +62,10 @@
                 Tag *dbTag = [Tag tagWithString:tag inManagedObjectContex:context]; // Factory method to create a Tag
                 if (dbTag) {
                     [tagEntitiesForPhoto addObject:dbTag]; // Add the returned Tag to the MutableSet
+                    
+                    // Now adding this photo to this tag, so increment the undeletedPhotoCount
+                    // Need to keep this count so that tags with no more photos wont be fetched
+                    dbTag.undeletedPhotoCount = @([dbTag.undeletedPhotoCount integerValue] + 1);
                 } else {
 /* ----> */                    NSLog(@"Error in dbTag Creation");
                 }
@@ -79,7 +85,7 @@
 // These tags were specifically excluded in Assignment IV, Requirement 3
 + (NSArray *)excludedTags
 {
-    return @[@"Cs193Pspot", @"Portrait", @"Landscape"];
+    return @[@"cs193pspot", @"portrait", @"landscape"];
 }
 
 @end

@@ -18,6 +18,7 @@
 #import "FlickrPhotoListTVC.h"
 #import "FlickrFetcher.h"
 #import "Photo.h"
+#import "Tag.h"
 
 @interface FlickrPhotoListTVC() <UISplitViewControllerDelegate>
 
@@ -118,6 +119,32 @@
     // Remove the button in the detailViewController
     [[self splitViewDetailWithBarButtonItem] performSelector:@selector(setSplitViewBarButtonItem:)
                                                   withObject:nil];
+}
+
+#pragma mark - UITableViewDataSource
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return YES;
+}
+
+- (void)tableView:(UITableView *)tableView
+    commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
+     forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        // Fetch the photo from the database
+        Photo *photo = [self.fetchedResultsController objectAtIndexPath:indexPath];
+        
+        // Mark photo as deleted
+        // Don't delete from database, otherwise the refresh method will put it back in
+        photo.isUserDeleted = @(YES);
+        
+        // Update the 'undeletedPhotoCount' for each Tag that this photo is a member
+        for (Tag* tag in photo.tags) {
+            tag.undeletedPhotoCount = @([tag.undeletedPhotoCount integerValue] - 1);
+        }
+    }
 }
 
 @end

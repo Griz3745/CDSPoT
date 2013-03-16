@@ -40,12 +40,12 @@
                                             ascending:YES
                                              selector:@selector(localizedCaseInsensitiveCompare:)]];
         // Thank you Joan for the syntax for this predicate
-        request.predicate = [NSPredicate predicateWithFormat:@"%@ IN tags", self.tagForPhotos];  
+        request.predicate = [NSPredicate predicateWithFormat:@"(%@ IN tags) AND (isUserDeleted = NO)", self.tagForPhotos];  
         
         self.fetchedResultsController =
             [[NSFetchedResultsController alloc] initWithFetchRequest:request
                                                 managedObjectContext:self.tagForPhotos.managedObjectContext
-                                                  sectionNameKeyPath:nil
+                                                  sectionNameKeyPath:@"section"
                                                            cacheName:nil];
     } else {
         self.fetchedResultsController = nil;

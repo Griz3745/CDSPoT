@@ -59,14 +59,16 @@
     @[[NSSortDescriptor sortDescriptorWithKey:@"tagString"
                                     ascending:YES
                                      selector:@selector(localizedCaseInsensitiveCompare:)]];
-    request.predicate = nil; // all Tags
+    
+    // Don't fetch tags which have no more 'undeleted' photos
+    request.predicate = [NSPredicate predicateWithFormat:@"undeletedPhotoCount > 0"];
     
     // Set the fetchedResultsController (from CoreDataTableViewController)
     self.fetchedResultsController =
-    [[NSFetchedResultsController alloc] initWithFetchRequest:request
-                                        managedObjectContext:managedObjectContext
-                                          sectionNameKeyPath:nil
-                                                   cacheName:nil];
+        [[NSFetchedResultsController alloc] initWithFetchRequest:request
+                                            managedObjectContext:managedObjectContext
+                                              sectionNameKeyPath:@"section"
+                                                       cacheName:nil];
 }
 
 // Implementation of Super Class's optional abstract method for reloading the database
@@ -177,7 +179,8 @@
     // Pull the data from the database, using the fetch setup when the fetchedResults controller was created
     Tag* tag = [self.fetchedResultsController objectAtIndexPath:indexPath];
     cell.textLabel.text = tag.tagString;
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%d photos", [tag.photos count]];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ photo%@",
+                                 tag.undeletedPhotoCount, ([tag.undeletedPhotoCount integerValue] == 1) ? @"" : @"s"];
 
     return cell;
 }
