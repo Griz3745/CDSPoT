@@ -7,6 +7,7 @@
 //
 
 #import "Tag+Create.h"
+#import "SPoT.h"
 
 @implementation Tag (Create)
 
@@ -39,7 +40,7 @@
         } else if (![matches count]) { // It's not in the database, so add it
             tag = [NSEntityDescription insertNewObjectForEntityForName:@"Tag" inManagedObjectContext:context];
             tag.tagString = tagString;
-            tag.section = [tag.tagString substringToIndex:1];
+            tag.firstItem = ([tagString isEqual:[ALL_TAG capitalizedString]]) ? @(YES) : @(NO);
             
         } else { // Return the tag that is in the database
             tag = [matches lastObject];

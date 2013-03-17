@@ -13,7 +13,7 @@
         <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="photos" inverseEntity="Tag" syncable="YES"/>
     </entity>
     <entity name="Tag" representedClassName="Tag" syncable="YES">
-        <attribute name="section" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="firstItem" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="tagString" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="undeletedPhotoCount" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <relationship name="photos" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Photo" inverseName="tags" inverseEntity="Photo" syncable="YES"/>

@@ -56,7 +56,9 @@
     // Build the fetch request that will be used to populate the TVC
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Tag"];
     request.sortDescriptors =
-    @[[NSSortDescriptor sortDescriptorWithKey:@"tagString"
+    @[[NSSortDescriptor sortDescriptorWithKey:@"firstItem"
+                                    ascending:NO],
+      [NSSortDescriptor sortDescriptorWithKey:@"tagString"
                                     ascending:YES
                                      selector:@selector(localizedCaseInsensitiveCompare:)]];
     
@@ -67,7 +69,7 @@
     self.fetchedResultsController =
         [[NSFetchedResultsController alloc] initWithFetchRequest:request
                                             managedObjectContext:managedObjectContext
-                                              sectionNameKeyPath:@"section"
+                                              sectionNameKeyPath:nil
                                                        cacheName:nil];
 }
 
@@ -124,9 +126,9 @@
         [self.managedObjectContext performBlock:^{ // don't assume main thread
             // Build a query to see if the tag is in the database
             NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Tag"];
-            request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"tagString"
-                                                                      ascending:YES
-                                                                       selector:@selector(localizedCaseInsensitiveCompare:)]];
+            request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"firstItem"
+                                                                      ascending:YES]];
+// ----> selector:@selector(localizedCaseInsensitiveCompare:)]];
             request.predicate = nil;
             
             // Execute the query
@@ -173,11 +175,18 @@
 // Must still implement this method from the TableViewDataSource
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    UITableViewCell *cell;
+    Tag* tag = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    
     // Pull a cell prototype from the pool
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FlickrTag"];
+    if ([tag.firstItem boolValue]) {
+        cell = [tableView dequeueReusableCellWithIdentifier:@"AllPhotoTag"];
+
+    } else {
+        cell = [tableView dequeueReusableCellWithIdentifier:@"FlickrTag"];
+    }
     
     // Pull the data from the database, using the fetch setup when the fetchedResults controller was created
-    Tag* tag = [self.fetchedResultsController objectAtIndexPath:indexPath];
     cell.textLabel.text = tag.tagString;
     cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ photo%@",
                                  tag.undeletedPhotoCount, ([tag.undeletedPhotoCount integerValue] == 1) ? @"" : @"s"];

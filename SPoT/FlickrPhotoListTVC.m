@@ -36,6 +36,11 @@
 
 #pragma mark - Segue
 
+- (Photo *)photoForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [self.fetchedResultsController objectAtIndexPath:indexPath];
+}
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     NSIndexPath *indexPath = nil;
@@ -47,7 +52,7 @@
     if (indexPath) {
         if ([segue.identifier isEqualToString:@"setPhoto:"]) { // set in the storyboard
             // Get the selected photo
-            Photo *photo = [self.fetchedResultsController objectAtIndexPath:indexPath];
+            Photo *photo = [self photoForRowAtIndexPath:(NSIndexPath *)indexPath];
             
             if ([segue.destinationViewController respondsToSelector:@selector(setPhoto:)]) {
                 // Set the photo in the destination class
@@ -135,7 +140,7 @@
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Fetch the photo from the database
-        Photo *photo = [self.fetchedResultsController objectAtIndexPath:indexPath];
+        Photo *photo = [self photoForRowAtIndexPath:(NSIndexPath *)indexPath];
         
         // Mark photo as deleted
         // Don't delete from database, otherwise the refresh method will put it back in
@@ -159,6 +164,10 @@
         
         // Remove the photo from cache
         [FlickrCache removePhotoURL:[NSURL URLWithString:photo.imageURL]];
+        
+        // This reloadData is necessary because AllTagPhotoListTVC fetches Tags, but displays Photos
+        // so the auto-refresh of the fetchResultsController does not detect the change a refresh automatically
+        [self.tableView reloadData];
     }
 }
 

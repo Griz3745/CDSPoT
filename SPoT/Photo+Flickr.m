@@ -7,6 +7,7 @@
 //
 
 #import "Photo+Flickr.h"
+#import "SPoT.h"
 #import "FlickrFetcher.h"
 #import "Tag+Create.h"
 
@@ -17,7 +18,7 @@
         inManagedObjectContext:(NSManagedObjectContext *)context
                    usingFormat:(FlickrPhotoFormat)flickrFormat
 {
-    Photo *photo = nil;
+    Photo *photoEntity = nil;
 
     // Build a query to see if the photo is in the database
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Photo"];
@@ -35,37 +36,44 @@
         NSLog(@"Error fetching photo from database");
         
     } else if (![matches count]) { // It's not in the database
-        photo = [NSEntityDescription insertNewObjectForEntityForName:@"Photo"
+        photoEntity = [NSEntityDescription insertNewObjectForEntityForName:@"Photo"
                                               inManagedObjectContext:context];
 
-        photo.title = [photoDictionary[FLICKR_PHOTO_TITLE] description]; // using description ensures that a
-                                                                         // reasonable string will be returned
-                                                                         // if the title is nil
-        photo.subtitle = [[photoDictionary valueForKeyPath:FLICKR_PHOTO_DESCRIPTION] description];
-        photo.imageURL = [[FlickrFetcher urlForPhoto:photoDictionary format:flickrFormat] absoluteString];
-        photo.uniqueID = [photoDictionary[FLICKR_PHOTO_ID] description];
-        photo.thumbnailURL = [[FlickrFetcher urlForPhoto:photoDictionary format:FlickrPhotoFormatSquare] absoluteString];
-        photo.thumbnailImage = nil;
-        photo.lastAccessTime = nil;
-        photo.section = [[photo.title substringToIndex:1] capitalizedString];
-        photo.isUserDeleted = @(NO);
+        photoEntity.title = [photoDictionary[FLICKR_PHOTO_TITLE] description]; // using description ensures that a
+                                                                               // reasonable string will be returned
+                                                                               // if the title is nil
+        photoEntity.subtitle = [[photoDictionary valueForKeyPath:FLICKR_PHOTO_DESCRIPTION] description];
+        photoEntity.imageURL = [[FlickrFetcher urlForPhoto:photoDictionary format:flickrFormat] absoluteString];
+        photoEntity.uniqueID = [photoDictionary[FLICKR_PHOTO_ID] description];
+        photoEntity.thumbnailURL = [[FlickrFetcher urlForPhoto:photoDictionary
+                                                        format:FlickrPhotoFormatSquare] absoluteString];
+        photoEntity.thumbnailImage = nil;
+        photoEntity.lastAccessTime = nil;
+        photoEntity.section = [[photoEntity.title substringToIndex:1] capitalizedString];
+        photoEntity.isUserDeleted = @(NO);
 
-        // Get the tags from the photo
-        NSString *photoTagString = [[photoDictionary valueForKey:FLICKR_TAGS] description];
+        NSMutableSet *tagEntitiesForPhoto = [[NSMutableSet alloc] init];
+
+        // Add the special 'All' tag to the photo, Extra Credit 3
+        NSString *photoTagString = ALL_TAG;
+        Tag *tagEntity = [Tag tagWithString:photoTagString inManagedObjectContex:context]; // Factory method to create a Tag
+        [tagEntitiesForPhoto addObject:tagEntity]; // Add the returned Tag to the MutableSet
+        tagEntity.undeletedPhotoCount = @([tagEntity.undeletedPhotoCount integerValue] + 1);
+
+        // Get the other tags from the photo
+        photoTagString = [[photoDictionary valueForKey:FLICKR_TAGS] description];
         NSArray *photoDictionaryTagStrings = [photoTagString componentsSeparatedByString:@" "];
 
         // Add the non-excluded tags to the NSSet of database tags for this photo
-        NSMutableSet *tagEntitiesForPhoto = [[NSMutableSet alloc] init];
-        
         for (NSString *tag in photoDictionaryTagStrings) { // Iterate across the array of tag strings
             if (![[Photo excludedTags] containsObject:tag]) { // Make sure the tag is not in the excluded list
-                Tag *dbTag = [Tag tagWithString:tag inManagedObjectContex:context]; // Factory method to create a Tag
-                if (dbTag) {
-                    [tagEntitiesForPhoto addObject:dbTag]; // Add the returned Tag to the MutableSet
+                tagEntity = [Tag tagWithString:tag inManagedObjectContex:context]; // Factory method to create a Tag
+                if (tagEntity) {
+                    [tagEntitiesForPhoto addObject:tagEntity]; // Add the returned Tag to the MutableSet
                     
                     // Now adding this photo to this tag, so increment the undeletedPhotoCount
                     // Need to keep this count so that tags with no more photos wont be fetched
-                    dbTag.undeletedPhotoCount = @([dbTag.undeletedPhotoCount integerValue] + 1);
+                    tagEntity.undeletedPhotoCount = @([tagEntity.undeletedPhotoCount integerValue] + 1);
                 } else {
 /* ----> */                    NSLog(@"Error in dbTag Creation");
                 }
@@ -73,13 +81,13 @@
         }
         
         // Add the relationship
-        photo.tags = tagEntitiesForPhoto; // Add the MutableSet to the Photo Entity
+        photoEntity.tags = tagEntitiesForPhoto; // Add the MutableSet to the Photo Entity
         
     } else { // It's in the database
-        photo = [matches lastObject];
+        photoEntity = [matches lastObject];
     }
     
-    return photo;
+    return photoEntity;
 }
 
 // These tags were specifically excluded in Assignment IV, Requirement 3

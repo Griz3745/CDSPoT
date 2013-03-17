@@ -16,3 +16,5 @@
 #define IPHONE_CACHE_SIZE_LIMIT 3000000
 // That makes 8 photos on the iPad equal 12MB
 #define IPAD_CACHE_SIZE_LIMIT 12000000
+
+#define ALL_TAG @"e mIKe g aLl phOToS"

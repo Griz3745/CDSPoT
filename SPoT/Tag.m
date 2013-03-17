@@ -12,7 +12,7 @@
 
 @implementation Tag
 
-@dynamic section;
+@dynamic firstItem;
 @dynamic tagString;
 @dynamic undeletedPhotoCount;
 @dynamic photos;

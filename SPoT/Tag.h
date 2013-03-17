@@ -13,7 +13,7 @@
 
 @interface Tag : NSManagedObject
 
-@property (nonatomic, retain) NSString * section;
+@property (nonatomic, retain) NSNumber * firstItem;
 @property (nonatomic, retain) NSString * tagString;
 @property (nonatomic, retain) NSNumber * undeletedPhotoCount;
 @property (nonatomic, retain) NSSet *photos;
