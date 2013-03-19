@@ -15,7 +15,6 @@
 
 #import "FlickrRecentPhotoListTVC.h"
 #import "SPoT.h"
-#import "Photo.h"
 
 @implementation FlickrRecentPhotoListTVC
 
@@ -47,25 +46,6 @@
                                             managedObjectContext:managedObjectContext
                                               sectionNameKeyPath:nil
                                                        cacheName:nil];
-}
-
-#pragma mark - Table view data source
-
-// Implementation of method from abstract base class
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Pull a cell prototype from the pool
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Flickr Recent Photo"];
-    
-    // Fetch a photo from the database
-    Photo *photo = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    
-    // Flesh out the cell based on the database information
-    cell.textLabel.text = photo.title;
-    cell.detailTextLabel.text = photo.subtitle;
-    cell.imageView.image = [UIImage imageWithData:photo.thumbnailImage];
-
-    return cell;
 }
 
 @end

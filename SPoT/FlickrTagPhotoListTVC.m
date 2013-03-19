@@ -14,8 +14,6 @@
 //
 
 #import "FlickrTagPhotoListTVC.h"
-#import "Photo.h"
-#import "UIApplication+NetworkActivity.h"
 
 @implementation FlickrTagPhotoListTVC
 
@@ -50,46 +48,6 @@
     } else {
         self.fetchedResultsController = nil;
     }
-}
-
-#pragma mark - Table view data source
-
-// Implementation of method from abstract base class
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Pull a cell prototype from the pool
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Flickr Tag Photo"];
-    
-    // Fetch a photo from the database
-    Photo *photo = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    
-    // Flesh out the cell based on the database information
-    cell.textLabel.text = photo.title;
-    cell.detailTextLabel.text = photo.subtitle;
-    cell.imageView.image = [UIImage imageWithData:photo.thumbnailImage];
-    
-    if (!photo.thumbnailImage) {
-        // Fetch the photo's thumbnail from Flickr
-        dispatch_queue_t downloadQueue = dispatch_queue_create("flickr thumbnail downloader", NULL);
-        dispatch_async(downloadQueue, ^{
-            // Increment Network Activity Indicator counter
-            [[UIApplication sharedApplication] showNetworkActivityIndicator];
-            
-            // Fetch the thumbnail from Flickr
-            NSData *thumbnailData = [NSData dataWithContentsOfURL:[NSURL URLWithString:photo.thumbnailURL]];
-            
-            // Decrement Network Activity Indicator counter
-            [[UIApplication sharedApplication] hideNetworkActivityIndicator];
-            
-            // Use 'performBlock to assure that the access to the database occurs
-            // in the same thread that the database was created
-            [photo.managedObjectContext performBlock:^{ // don't assume main thread
-                photo.thumbnailImage = thumbnailData;
-            }];
-        });
-    }
-    
-    return cell;
 }
 
 @end

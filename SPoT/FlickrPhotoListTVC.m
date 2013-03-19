@@ -17,9 +17,9 @@
 
 #import "FlickrPhotoListTVC.h"
 #import "FlickrFetcher.h"
-#import "Photo.h"
 #import "Tag.h"
 #import "FlickrCache.h"
+#import "UIApplication+NetworkActivity.h"
 
 @interface FlickrPhotoListTVC() <UISplitViewControllerDelegate>
 
@@ -169,6 +169,52 @@
         // so the auto-refresh of the fetchResultsController does not detect the change a refresh automatically
         [self.tableView reloadData];
     }
+}
+
+// Implementation of method from abstract base class
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // Pull a cell prototype from the pool
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Photo"];
+
+    cell.imageView.image = nil; // because we reuse cells we have to clear the image
+
+    // Fetch a photo from the database
+    Photo *photo = [self photoForRowAtIndexPath:(NSIndexPath *)indexPath];
+    
+    // Flesh out the cell based on the database information
+    cell.textLabel.text = photo.title;
+    cell.detailTextLabel.text = photo.subtitle;
+    
+    if (!photo.thumbnailImage) {
+        // Fetch the photo's thumbnail from Flickr
+        dispatch_queue_t downloadQueue = dispatch_queue_create("flickr thumbnail downloader", NULL);
+        dispatch_async(downloadQueue, ^{
+            // Increment Network Activity Indicator counter
+            [[UIApplication sharedApplication] showNetworkActivityIndicator];
+            
+            // Fetch the thumbnail from Flickr
+            NSData *thumbnailData = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:photo.thumbnailURL]];
+            
+            // Decrement Network Activity Indicator counter
+            [[UIApplication sharedApplication] hideNetworkActivityIndicator];
+            
+            // Use 'performBlock to assure that the access to the database occurs
+            // in the same thread that the database was created
+            dispatch_async(dispatch_get_main_queue(), ^{
+                // Tell the cell to redraw
+                cell.imageView.image = [[UIImage alloc] initWithData:photo.thumbnailImage];
+                [self.tableView reloadData];
+                [photo.managedObjectContext performBlock:^{ // don't assume main thread
+                    photo.thumbnailImage = thumbnailData;
+                }];
+            });
+        });
+    } else {
+        cell.imageView.image = [[UIImage alloc] initWithData:photo.thumbnailImage]; 
+    }
+    
+    return cell;
 }
 
 @end

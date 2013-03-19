@@ -13,7 +13,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Flickr Recent Photo" textLabel="fBf-Xr-xqw" detailTextLabel="eZa-mz-eQo" style="IBUITableViewCellStyleSubtitle" id="elv-js-vXK">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Photo" textLabel="fBf-Xr-xqw" detailTextLabel="eZa-mz-eQo" style="IBUITableViewCellStyleSubtitle" id="elv-js-vXK">
                                 <rect key="frame" x="0.0" y="22" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -132,7 +132,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="All Tag Photo" textLabel="yEO-Oz-tye" detailTextLabel="JyG-SL-k4t" style="IBUITableViewCellStyleSubtitle" id="Zdb-Nf-euN">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Photo" textLabel="yEO-Oz-tye" detailTextLabel="JyG-SL-k4t" style="IBUITableViewCellStyleSubtitle" id="Zdb-Nf-euN">
                                 <rect key="frame" x="0.0" y="22" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -177,7 +177,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Flickr Tag Photo" textLabel="huF-00-zmH" detailTextLabel="q7B-99-wGd" style="IBUITableViewCellStyleSubtitle" id="J0o-HB-5bD">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Photo" textLabel="huF-00-zmH" detailTextLabel="q7B-99-wGd" style="IBUITableViewCellStyleSubtitle" id="J0o-HB-5bD">
                                 <rect key="frame" x="0.0" y="22" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -302,50 +302,12 @@
             <point key="canvasLocation" x="727" y="613"/>
         </scene>
     </scenes>
-    <classes>
-        <class className="AllTagPhotoListTVC" superclassName="FlickrPhotoListTVC">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/AllTagPhotoListTVC.h"/>
-        </class>
-        <class className="CoreDataTableViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/CoreDataTableViewController.h"/>
-        </class>
-        <class className="FlickrListTVC" superclassName="CoreDataTableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FlickrListTVC.h"/>
-        </class>
-        <class className="FlickrPhotoListTVC" superclassName="FlickrListTVC">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FlickrPhotoListTVC.h"/>
-        </class>
-        <class className="FlickrRecentPhotoListTVC" superclassName="FlickrPhotoListTVC">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FlickrRecentPhotoListTVC.h"/>
-        </class>
-        <class className="FlickrTagListTVC" superclassName="FlickrListTVC">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FlickrTagListTVC.h"/>
-        </class>
-        <class className="FlickrTagPhotoListTVC" superclassName="FlickrPhotoListTVC">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FlickrTagPhotoListTVC.h"/>
-        </class>
-        <class className="ImageViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ImageViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="activitySpinner" candidateClass="UIActivityIndicatorView"/>
-                <relationship kind="outlet" name="scrollView" candidateClass="UIScrollView"/>
-                <relationship kind="outlet" name="titleBarButtonItem" candidateClass="UIBarButtonItem"/>
-                <relationship kind="outlet" name="toolBar" candidateClass="UIToolbar"/>
-            </relationships>
-        </class>
-        <class className="NSLayoutConstraint" superclassName="NSObject">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
-        </class>
-        <class className="UIRefreshControl" superclassName="UIControl">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/UIRefreshControl.h"/>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="djR-i9-RvJ"/>
+        <segue reference="o8K-Rj-U2a"/>
     </inferredMetricsTieBreakers>
 </document>

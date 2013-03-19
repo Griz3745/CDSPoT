@@ -8,7 +8,6 @@
 
 #import "AllTagPhotoListTVC.h"
 #import "Tag.h"
-#import "Photo.h"
 
 @implementation AllTagPhotoListTVC
 
@@ -44,8 +43,6 @@
                                                    cacheName:nil];
 }
 
-#pragma mark - Table view data source
-
 - (Photo *)photoForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Thanks to Joan for this code to get the set of photos
@@ -67,20 +64,7 @@
     return sortedVisiblePhotosInSection[indexPath.row];
 }
 
-// Implementation of method from abstract base class
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Pull a cell prototype from the pool
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"All Tag Photo"];
-    
-    Photo *photo = [self photoForRowAtIndexPath:(NSIndexPath *)indexPath];
-    
-    // Flesh out the cell based on the database information
-    cell.textLabel.text = photo.title;
-    cell.detailTextLabel.text = photo.subtitle;
-    
-    return cell;
-}
+#pragma mark - Table view data source
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {

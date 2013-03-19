@@ -140,8 +140,6 @@
                     NSLog(@"    %@, %@", dbPhoto.title, dbPhoto.subtitle);
                 }
             }
-            int i;
-            i = 0; // This is here just for a spot to  put the breakpoint
         }];
     }
 /* ----> */

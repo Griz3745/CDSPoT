@@ -21,14 +21,6 @@
 
 @implementation FlickrListTVC
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-
-    // Preserve selection between presentations.
-    self.clearsSelectionOnViewWillAppear = NO;
-}
-
 - (void)setManagedObjectContext:(NSManagedObjectContext *)managedObjectContext
 {
     _managedObjectContext = managedObjectContext;

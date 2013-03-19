@@ -16,7 +16,10 @@
 //
 
 #import "FlickrListTVC.h"
+#import "Photo.h"
 
 @interface FlickrPhotoListTVC : FlickrListTVC
+
+- (Photo *)photoForRowAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
