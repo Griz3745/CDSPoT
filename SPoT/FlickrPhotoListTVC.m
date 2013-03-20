@@ -23,9 +23,20 @@
 
 @interface FlickrPhotoListTVC() <UISplitViewControllerDelegate>
 
+// Tracks an association between a cell and the current photo for that cell
+// Necessary to prevent redrawing of thumbnails when a cell is reused
+@property (strong, nonatomic) NSMutableDictionary *cellThumbnails;
+
 @end
 
 @implementation FlickrPhotoListTVC
+
+- (NSMutableDictionary *) cellThumbnails
+{
+    if (!_cellThumbnails) _cellThumbnails = [[NSMutableDictionary alloc] init];
+    
+    return _cellThumbnails;
+}
 
 -(void)awakeFromNib
 {
@@ -173,11 +184,11 @@
 
 // Implementation of method from abstract base class
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+{    
+    static NSInteger cellTag = 1;
+
     // Pull a cell prototype from the pool
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Photo"];
-
-    cell.imageView.image = nil; // because we reuse cells we have to clear the image
 
     // Fetch a photo from the database
     Photo *photo = [self photoForRowAtIndexPath:(NSIndexPath *)indexPath];
@@ -185,8 +196,26 @@
     // Flesh out the cell based on the database information
     cell.textLabel.text = photo.title;
     cell.detailTextLabel.text = photo.subtitle;
+    cell.imageView.image = [UIImage imageNamed:@"Placeholder.png"];
     
     if (!photo.thumbnailImage) {
+        
+        NSString *uniqueCellIdentifier;
+        
+        // Cells start with a tag of 0, so I give each new one a unique tag
+        // A non-zero tag means the cell is being reused
+        if (cell.tag == 0)
+        {
+            cell.tag = cellTag++;
+        }
+        
+        // Convert the tag to a string so that it can be used as a key in the Dictionary
+        uniqueCellIdentifier = [NSString stringWithFormat:@"%d", cell.tag];
+        
+        // Tracks an association between a cell and the current photo for that cell
+        // Necessary to prevent redrawing of thumbnails when a cell is reused
+        self.cellThumbnails[uniqueCellIdentifier] = photo;
+        
         // Fetch the photo's thumbnail from Flickr
         dispatch_queue_t downloadQueue = dispatch_queue_create("flickr thumbnail downloader", NULL);
         dispatch_async(downloadQueue, ^{
@@ -202,18 +231,24 @@
             // Use 'performBlock to assure that the access to the database occurs
             // in the same thread that the database was created
             dispatch_async(dispatch_get_main_queue(), ^{
-                // Tell the cell to redraw
-                cell.imageView.image = [[UIImage alloc] initWithData:photo.thumbnailImage];
-                [self.tableView reloadData];
+                Photo *currentPhotoForCell = self.cellThumbnails[uniqueCellIdentifier];
+                if ([photo isEqual:currentPhotoForCell]) {
+                    // Tell the cell to redraw
+                    cell.imageView.image = [[UIImage alloc] initWithData:thumbnailData];
+// ----> */                    [cell setNeedsDisplay];
+/* ----> */                     NSLog(@"Photo is displayed for cell.tag:%d", cell.tag);
+                } else {
+/* ----> */                    NSLog(@"Photo has changed for cell.tag:%d", cell.tag);
+                }
                 [photo.managedObjectContext performBlock:^{ // don't assume main thread
                     photo.thumbnailImage = thumbnailData;
                 }];
             });
         });
     } else {
-        cell.imageView.image = [[UIImage alloc] initWithData:photo.thumbnailImage]; 
+        cell.imageView.image = [[UIImage alloc] initWithData:photo.thumbnailImage];
     }
-    
+
     return cell;
 }
 

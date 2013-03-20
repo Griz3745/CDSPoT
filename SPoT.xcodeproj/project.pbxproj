@@ -14,6 +14,7 @@
 		4C1438DF16E004B700993B3E /* iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C1438DE16E004B700993B3E /* iPad.storyboard */; };
 		4C1438E216E0058200993B3E /* FlickrCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C1438E116E0058200993B3E /* FlickrCache.m */; };
 		4C1438E516E02C9600993B3E /* UIApplication+NetworkActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C1438E416E02C9600993B3E /* UIApplication+NetworkActivity.m */; };
+		4C64B5BE16FA45DC0028798F /* Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C64B5BD16FA45DC0028798F /* Placeholder.png */; };
 		4C71500E16DAAA32002F5654 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C71500D16DAAA32002F5654 /* UIKit.framework */; };
 		4C71501016DAAA32002F5654 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C71500F16DAAA32002F5654 /* Foundation.framework */; };
 		4C71501216DAAA32002F5654 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C71501116DAAA32002F5654 /* CoreGraphics.framework */; };
@@ -48,6 +49,7 @@
 		4C1438E116E0058200993B3E /* FlickrCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlickrCache.m; sourceTree = "<group>"; };
 		4C1438E316E02C9600993B3E /* UIApplication+NetworkActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIApplication+NetworkActivity.h"; sourceTree = "<group>"; };
 		4C1438E416E02C9600993B3E /* UIApplication+NetworkActivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIApplication+NetworkActivity.m"; sourceTree = "<group>"; };
+		4C64B5BD16FA45DC0028798F /* Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Placeholder.png; sourceTree = "<group>"; };
 		4C67059416DC2DD3002E81DB /* SPoT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPoT.h; sourceTree = "<group>"; };
 		4C71500A16DAAA32002F5654 /* SPoT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SPoT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C71500D16DAAA32002F5654 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -188,6 +190,7 @@
 				4C71501F16DAAA32002F5654 /* Default.png */,
 				4C71502116DAAA32002F5654 /* Default@2x.png */,
 				4C71502316DAAA32002F5654 /* Default-568h@2x.png */,
+				4C64B5BD16FA45DC0028798F /* Placeholder.png */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -262,6 +265,7 @@
 				4C71502416DAAA32002F5654 /* Default-568h@2x.png in Resources */,
 				4C71502716DAAA32002F5654 /* iPhone.storyboard in Resources */,
 				4C1438DF16E004B700993B3E /* iPad.storyboard in Resources */,
+				4C64B5BE16FA45DC0028798F /* Placeholder.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
