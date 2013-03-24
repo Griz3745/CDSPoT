@@ -32,6 +32,7 @@
 		4C78C42B16EACC3D00E9FFDA /* SPoT.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4C78C42916EACC3D00E9FFDA /* SPoT.xcdatamodeld */; };
 		4C92C88316E9611E00D1971B /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C92C88216E9611E00D1971B /* CoreData.framework */; };
 		4C92C88616E9714D00D1971B /* SingletonForManagedDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C92C88516E9714D00D1971B /* SingletonForManagedDocument.m */; };
+		4C9F9D2D16FB936300ECD10D /* PhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C9F9D2C16FB936300ECD10D /* PhotoCell.m */; };
 		4CD3D32416F550B9002B0D36 /* AllTagPhotoListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CD3D32316F550B9002B0D36 /* AllTagPhotoListTVC.m */; };
 		4CD3D32716F55EA3002B0D36 /* Tag.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CD3D32616F55EA3002B0D36 /* Tag.m */; };
 		4CD8732D16F4131900713C4E /* Photo.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CD8732C16F4131900713C4E /* Photo.m */; };
@@ -81,6 +82,8 @@
 		4C92C88216E9611E00D1971B /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		4C92C88416E9714D00D1971B /* SingletonForManagedDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingletonForManagedDocument.h; sourceTree = "<group>"; };
 		4C92C88516E9714D00D1971B /* SingletonForManagedDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SingletonForManagedDocument.m; sourceTree = "<group>"; };
+		4C9F9D2B16FB936300ECD10D /* PhotoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoCell.h; sourceTree = "<group>"; };
+		4C9F9D2C16FB936300ECD10D /* PhotoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoCell.m; sourceTree = "<group>"; };
 		4CD3D32216F550B9002B0D36 /* AllTagPhotoListTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllTagPhotoListTVC.h; sourceTree = "<group>"; };
 		4CD3D32316F550B9002B0D36 /* AllTagPhotoListTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AllTagPhotoListTVC.m; sourceTree = "<group>"; };
 		4CD3D32516F55EA3002B0D36 /* Tag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tag.h; sourceTree = "<group>"; };
@@ -170,6 +173,8 @@
 				4CD3D32616F55EA3002B0D36 /* Tag.m */,
 				4C0B222816EBB7BB004DA4D7 /* Tag+Create.h */,
 				4C0B222916EBB7BB004DA4D7 /* Tag+Create.m */,
+				4C9F9D2B16FB936300ECD10D /* PhotoCell.h */,
+				4C9F9D2C16FB936300ECD10D /* PhotoCell.m */,
 				4C1438E316E02C9600993B3E /* UIApplication+NetworkActivity.h */,
 				4C1438E416E02C9600993B3E /* UIApplication+NetworkActivity.m */,
 				4CDB96DC16EE1A4F00D953FB /* Provided Files */,
@@ -295,6 +300,7 @@
 				4CD8732D16F4131900713C4E /* Photo.m in Sources */,
 				4CD3D32416F550B9002B0D36 /* AllTagPhotoListTVC.m in Sources */,
 				4CD3D32716F55EA3002B0D36 /* Tag.m in Sources */,
+				4C9F9D2D16FB936300ECD10D /* PhotoCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
